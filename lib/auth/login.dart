@@ -20,7 +20,8 @@ class _LoginState extends State<Login> {
   final String _url_terms_and_condition = 'https://flutter.dev';
 
   // Github url:
-  final String _url_github = 'https://flutter.dev';
+  final String _url_github =
+      'https://github.com/adarshnagrikar14/jeevayu-gsc-22';
 
   // Linkedin url:
   final String _url_linkedin = 'https://flutter.dev';
