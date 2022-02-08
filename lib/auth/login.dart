@@ -24,7 +24,7 @@ class _LoginState extends State<Login> {
       'https://github.com/adarshnagrikar14/jeevayu-gsc-22';
 
   // Linkedin url:
-  final String _url_linkedin = 'https://flutter.dev';
+  final String _url_linkedin = 'https://linkedin.com/in/adarsh-nagrikar/';
 
   // Youtube url:
   final String _url_youtube = 'https://youtube.com';
