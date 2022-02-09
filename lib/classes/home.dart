@@ -11,33 +11,21 @@ class DashBoard extends StatefulWidget {
 class _DashBoardState extends State<DashBoard> {
   static const batteryChannel = MethodChannel('com.project/battery');
 
-  String _password = 'Getting..';
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: Text(_password),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              getBatteryLevel();
-            },
-            child: const Text('Get Password'),
-          ),
-        ],
+    return const Scaffold(
+      body: Center(
+        child: Text('Home'),
       ),
     );
   }
 
+  // getting data from mainactivity.java
   Future getBatteryLevel() async {
     final String _newPass =
         await batteryChannel.invokeMethod('getBatteryLevel');
-    setState(() {
-      _password = _newPass;
-    });
+    // setState(() {
+    //   _password = _newPass;
+    // });
   }
 }

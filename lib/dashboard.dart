@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:async';
 
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
@@ -7,6 +9,7 @@ import 'package:jeevayu/classes/settings.dart';
 import 'package:jeevayu/classes/account.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -17,6 +20,12 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
+
+  // youtube url
+  final String _url_youtube = "https://youtube.com";
+
+  // terms url
+  final String _url_terms = "https://flutter.dev";
 
   @override
   void initState() {
@@ -62,6 +71,35 @@ class _MainScreenState extends State<MainScreen> {
               fontSize: 22,
             ),
           ),
+          actions: <Widget>[
+            // help
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5.0),
+              child: GestureDetector(
+                child: const Icon(
+                  Icons.help,
+                  size: 25.0,
+                ),
+                onTap: () {
+                  // openYoutube();
+                },
+              ),
+            ),
+
+            // other options
+            PopupMenuButton<String>(
+              onSelected: handleClick,
+              itemBuilder: (BuildContext context) {
+                return {'Help', 'Terms and Conditions', 'Feedback'}
+                    .map((String choice) {
+                  return PopupMenuItem<String>(
+                    value: choice,
+                    child: Text(choice),
+                  );
+                }).toList();
+              },
+            ),
+          ],
           toolbarHeight: 60.0,
           backgroundColor: Colors.grey[850],
           shadowColor: Colors.grey[500],
@@ -141,5 +179,30 @@ class _MainScreenState extends State<MainScreen> {
         body: _widgetOptions.elementAt(_selectedIndex),
       ),
     );
+  }
+
+  void handleClick(String value) {
+    switch (value) {
+      case 'Help':
+        openYoutube();
+        break;
+      case 'Terms and Conditions':
+        openTerms();
+        break;
+    }
+  }
+
+  // open yt
+  void openYoutube() async {
+    if (!await launch(_url_youtube)) {
+      throw 'Could not open Terms and condition!';
+    }
+  }
+
+  // open t&c
+  void openTerms() async {
+    if (!await launch(_url_terms)) {
+      throw 'Could not open Terms and condition!';
+    }
   }
 }
