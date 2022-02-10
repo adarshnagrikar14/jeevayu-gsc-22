@@ -50,25 +50,6 @@ public class MainActivity extends FlutterActivity {
 
     }
 
-    private void setPass(Context context) {
-        try {
-
-            assert context != null;
-            WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            Method getConfigMethod = wifiManager.getClass().getMethod("getWifiApConfiguration");
-            WifiConfiguration wifiConfiguration = (WifiConfiguration) getConfigMethod.invoke(wifiManager);
-            assert wifiConfiguration != null;
-            wifiConfiguration.SSID = "Name";
-            wifiConfiguration.preSharedKey = "Password";
-
-            Method setConfigMethod = wifiManager.getClass().getMethod("setWifiApConfiguration", WifiConfiguration.class);
-            setConfigMethod.invoke(wifiManager, wifiConfiguration);
-
-        } catch (Exception e) {
-            Log.e("TAG", "onCreate: ", e);
-        }
-    }
-
     private String getPass(Context context) {
 
         String level;
