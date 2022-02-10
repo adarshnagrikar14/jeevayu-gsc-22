@@ -25,7 +25,7 @@ class _MainScreenState extends State<MainScreen> {
   final String _url_youtube = "https://youtube.com";
 
   // terms url
-  final String _url_terms = "https://flutter.dev";
+  final String _url_terms = "https://youtube.com";
 
   @override
   void initState() {
