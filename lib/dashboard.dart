@@ -68,7 +68,8 @@ class _MainScreenState extends State<MainScreen> {
           title: const Text(
             'Jeevayu',
             style: TextStyle(
-              fontSize: 22,
+              fontSize: 24,
+              fontWeight: FontWeight.w500,
             ),
           ),
           actions: <Widget>[
@@ -76,9 +77,13 @@ class _MainScreenState extends State<MainScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5.0),
               child: GestureDetector(
-                child: const Icon(
-                  Icons.help,
-                  size: 25.0,
+                child: const Tooltip(
+                  triggerMode: TooltipTriggerMode.longPress,
+                  message: "Video Message",
+                  child: Icon(
+                    Icons.videocam_rounded,
+                    size: 25.0,
+                  ),
                 ),
                 onTap: () {
                   // openYoutube();
@@ -87,30 +92,26 @@ class _MainScreenState extends State<MainScreen> {
             ),
 
             // other options
-            PopupMenuButton<String>(
-              onSelected: handleClick,
-              itemBuilder: (BuildContext context) {
-                return {'Help', 'Terms and Conditions', 'Feedback'}
-                    .map((String choice) {
-                  return PopupMenuItem<String>(
-                    value: choice,
-                    child: Text(choice),
-                  );
-                }).toList();
-              },
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5.0),
+              child: PopupMenuButton<String>(
+                onSelected: handleClick,
+                iconSize: 28.0,
+                itemBuilder: (BuildContext context) {
+                  return {'Help', 'Terms and Conditions', 'Feedback'}
+                      .map((String choice) {
+                    return PopupMenuItem<String>(
+                      value: choice,
+                      child: Text(choice),
+                    );
+                  }).toList();
+                },
+              ),
             ),
           ],
           toolbarHeight: 60.0,
           backgroundColor: Colors.grey[850],
-          shadowColor: Colors.grey[500],
-          leading: const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: CircleAvatar(
-              backgroundImage: NetworkImage(
-                'https://media.istockphoto.com/photos/o2-picture-id157679265',
-              ),
-            ),
-          ),
+          shadowColor: Colors.grey[400],
         ),
 
         // Bottom nav bar
