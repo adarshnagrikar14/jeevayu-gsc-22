@@ -30,7 +30,6 @@ class MyApp extends StatelessWidget {
       title: 'My App',
       home: const ScreenSplash(), // Add Splashscreen first
       debugShowCheckedModeBanner: false,
-      // theme: ThemeData.light(), // {Set it latter}
       theme: ThemeData.dark(), // set app theme
     );
   }

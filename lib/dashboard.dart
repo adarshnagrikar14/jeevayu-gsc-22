@@ -9,6 +9,7 @@ import 'package:jeevayu/classes/settings.dart';
 import 'package:jeevayu/classes/account.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:jeevayu/features/video_message.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MainScreen extends StatefulWidget {
@@ -27,15 +28,20 @@ class _MainScreenState extends State<MainScreen> {
   // terms url
   final String _url_terms = "https://youtube.com";
 
+  // msg to display
+  late bool _allowVideoMsg;
+
   @override
   void initState() {
     super.initState();
 
+    _allowVideoMsg = true;
+
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarIconBrightness:
-            Brightness.light, // this will change the brightness of the icons
-        statusBarColor: Colors.black, // or any color you want
+            Brightness.light, // change the brightness of the icons
+        statusBarColor: Colors.black,
       ),
     );
   }
@@ -87,6 +93,7 @@ class _MainScreenState extends State<MainScreen> {
                 ),
                 onTap: () {
                   // openYoutube();
+                  openVideoDialog();
                 },
               ),
             ),
@@ -205,5 +212,103 @@ class _MainScreenState extends State<MainScreen> {
     if (!await launch(_url_terms)) {
       throw 'Could not open Terms and condition!';
     }
+  }
+
+  openVideoDialog() {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(32.0),
+            ),
+          ),
+          contentPadding: const EdgeInsets.only(top: 10.0),
+          backgroundColor: Colors.grey[850],
+          content: SizedBox(
+            width: 300.0,
+            height: 250.0,
+
+            // design start here
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // heading:
+                const Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 20.0, top: 6.0),
+                    child: Text(
+                      'Video Message',
+                      style: TextStyle(
+                        fontSize: 22.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  flex: 1,
+                ),
+
+                // first div:
+                const Divider(
+                  color: Colors.grey,
+                  height: 4.0,
+                ),
+
+                // display msg
+                Expanded(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        _allowVideoMsg
+                            ? "You can Record the video message and send it to the registered service provider."
+                            : "Can'\t Record Video message as the device is not registered with any Service.",
+                        style: const TextStyle(
+                          fontSize: 18.0,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  flex: 3,
+                ),
+
+                // button
+                Expanded(
+                  child: Center(
+                    child: GestureDetector(
+                      onTap: () {
+                        if (_allowVideoMsg) {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const VideoMessage(),
+                            ),
+                          );
+                        } else {
+                          Navigator.pop(context);
+                        }
+                      },
+                      child: Text(
+                        _allowVideoMsg ? "Proceed" : "Ok",
+                        style: const TextStyle(
+                          color: Colors.blue,
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  flex: 2,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }
