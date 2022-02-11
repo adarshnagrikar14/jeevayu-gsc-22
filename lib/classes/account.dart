@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:jeevayu/helpers/address.dart';
 
 class Account extends StatefulWidget {
   const Account({Key? key}) : super(key: key);
@@ -179,16 +180,53 @@ class _AccountState extends State<Account> {
                   ),
                 ),
               ),
-              TextField(
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  hintText: _address.isEmpty ? 'Getting number...' : _address,
-                  hintStyle: const TextStyle(
-                    fontSize: 18,
-                    color: Colors.white70,
+
+              // Address getting
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      minLines:
+                          6, // any number you need (It works as the rows for the textarea)
+                      keyboardType: TextInputType.multiline,
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        hintText:
+                            _address.isEmpty ? 'Getting address...' : _address,
+                        hintMaxLines: 10,
+                      ),
+                      maxLines: null,
+                    ),
+                    // _address.isEmpty ? 'Getting address...' : _address
+                    flex: 6,
                   ),
+
+                  // edit Address
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AddressUpdate()),
+                        );
+                      },
+                      child: const Icon(
+                        Icons.edit,
+                      ),
+                    ),
+                    flex: 1,
+                  )
+                ],
+              ),
+
+              // divider 2
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 10.0),
+                child: Divider(
+                  height: 2.0,
+                  color: Colors.grey,
                 ),
-                enabled: false,
               ),
             ],
           ),
