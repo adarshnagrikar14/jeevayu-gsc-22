@@ -1,8 +1,11 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jeevayu/helpers/address.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Account extends StatefulWidget {
   const Account({Key? key}) : super(key: key);
@@ -20,6 +23,10 @@ class _AccountState extends State<Account> {
   late String _address = "";
   late String _userId;
 
+  // T&C url:
+  final String _url_terms_and_condition = 'https://flutter.dev';
+
+  // controller
   final TextEditingController _phoneController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<FormFieldState> _phoneFormKey = GlobalKey<FormFieldState>();
@@ -186,18 +193,18 @@ class _AccountState extends State<Account> {
                 children: [
                   Expanded(
                     child: TextFormField(
-                      minLines:
-                          6, // any number you need (It works as the rows for the textarea)
+                      minLines: 6,
                       keyboardType: TextInputType.multiline,
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
                         hintText:
                             _address.isEmpty ? 'Getting address...' : _address,
+                        hintStyle: const TextStyle(color: Colors.white70),
                         hintMaxLines: 10,
+                        enabled: false,
                       ),
                       maxLines: null,
                     ),
-                    // _address.isEmpty ? 'Getting address...' : _address
                     flex: 6,
                   ),
 
@@ -228,6 +235,46 @@ class _AccountState extends State<Account> {
                   color: Colors.grey,
                 ),
               ),
+
+              // bottom info line
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 25.0),
+                child: Row(
+                  children: const [
+                    // info icon
+                    Expanded(
+                      child: Icon(Icons.info_outline_rounded),
+                      flex: 1,
+                    ),
+                    SizedBox(
+                      width: 10.0,
+                    ),
+                    // text
+                    Expanded(
+                      child: Text(
+                        'Your profile data may be shared with service provider to get in touch with you for the service offered. Read T&C below.',
+                      ),
+                      flex: 5,
+                    )
+                  ],
+                ),
+              ),
+
+              // terms nd con
+              Center(
+                child: GestureDetector(
+                  onTap: () async {
+                    openTerms();
+                  }, // opening link
+                  child: const Text(
+                    'Terms and Conditions.',
+                    style: TextStyle(
+                      letterSpacing: 1,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              )
             ],
           ),
         ),
@@ -366,6 +413,12 @@ class _AccountState extends State<Account> {
         });
       },
     );
+  }
+
+  void openTerms() async {
+    if (!await launch(_url_terms_and_condition)) {
+      throw 'Could not open Terms and condition!';
+    }
   }
 }
 
