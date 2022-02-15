@@ -31,11 +31,15 @@ class _MainScreenState extends State<MainScreen> {
   // msg to display
   late bool _allowVideoMsg;
 
+  // chnnel1
+  static const deviceChannel = MethodChannel('com.project/deviceState');
+
   @override
   void initState() {
     super.initState();
 
-    _allowVideoMsg = true;
+    // allow video msg or not
+    getPref();
 
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
@@ -215,6 +219,8 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   openVideoDialog() {
+    getPref();
+
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -264,7 +270,7 @@ class _MainScreenState extends State<MainScreen> {
                       child: Text(
                         _allowVideoMsg
                             ? "You can Record the video message and send it to the registered service provider."
-                            : "Can'\t Record Video message as the device is not registered with any Service.",
+                            : "Can't Record Video message as the device is not registered with any Service.",
                         style: const TextStyle(
                           fontSize: 18.0,
                         ),
@@ -310,5 +316,24 @@ class _MainScreenState extends State<MainScreen> {
         );
       },
     );
+  }
+
+  // get the pref
+  Future getPref() async {
+    final String state = await deviceChannel.invokeMethod('getPreference');
+
+    if (state.length == 2) {
+      setState(() {
+        _allowVideoMsg = false;
+      });
+    } else if (state.isEmpty) {
+      setState(() {
+        _allowVideoMsg = false;
+      });
+    } else {
+      setState(() {
+        _allowVideoMsg = true;
+      });
+    }
   }
 }

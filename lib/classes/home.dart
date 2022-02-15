@@ -9,23 +9,59 @@ class DashBoard extends StatefulWidget {
 }
 
 class _DashBoardState extends State<DashBoard> {
-  static const batteryChannel = MethodChannel('com.project/battery');
+  static const deviceChannel = MethodChannel('com.project/deviceState');
+  late String _devState = "no";
+
+  @override
+  void initState() {
+    super.initState();
+    getPref();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text('Home'),
-      ),
+    return Scaffold(
+      body:
+          _devState.length == 2 ? const DeviceUnpaired() : const DevicePaired(),
     );
   }
 
-  // getting data from mainactivity.java
-  Future getBatteryLevel() async {
-    final String _newPass =
-        await batteryChannel.invokeMethod('getBatteryLevel');
-    // setState(() {
-    //   _password = _newPass;
-    // });
+  Future getPref() async {
+    final String state = await deviceChannel.invokeMethod('getPreference');
+    setState(() {
+      _devState = state;
+    });
+  }
+}
+
+class DevicePaired extends StatefulWidget {
+  const DevicePaired({Key? key}) : super(key: key);
+
+  @override
+  _DevicePairedState createState() => _DevicePairedState();
+}
+
+class _DevicePairedState extends State<DevicePaired> {
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text('Dev paired'),
+    );
+  }
+}
+
+class DeviceUnpaired extends StatefulWidget {
+  const DeviceUnpaired({Key? key}) : super(key: key);
+
+  @override
+  _DeviceUnpairedState createState() => _DeviceUnpairedState();
+}
+
+class _DeviceUnpairedState extends State<DeviceUnpaired> {
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text('Dev not paired'),
+    );
   }
 }
