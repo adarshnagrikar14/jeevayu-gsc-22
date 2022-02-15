@@ -23,9 +23,6 @@ class _HistoryState extends State<History> {
     setState(() {
       _userId = user!.uid;
     });
-
-    // query history
-    // getHistory();
   }
 
   @override
@@ -59,7 +56,30 @@ class _HistoryState extends State<History> {
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
             return const Center(
-              child: Text('No data'),
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.data!.size == 0) {
+            // if usr use for first time
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: const [
+                Icon(
+                  Icons.history,
+                  size: 90.0,
+                  color: Colors.grey,
+                ),
+
+                // no hist text
+                Text(
+                  'No History Found!',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 18.0,
+                  ),
+                  textAlign: TextAlign.center,
+                )
+              ],
             );
           } else {
             return Padding(
@@ -68,6 +88,8 @@ class _HistoryState extends State<History> {
               child: ListView(
                 children: snapshot.data!.docs.map((documents) {
                   return Card(
+                    color: Colors.grey[800],
+                    shadowColor: Colors.grey[300],
                     margin: const EdgeInsets.only(
                       bottom: 20.0,
                     ),
@@ -76,14 +98,14 @@ class _HistoryState extends State<History> {
                         "Registered Device Id : " + documents['DeviceID'] + " ",
                         style: const TextStyle(
                           fontSize: 17.0,
-                          height: 1.5,
+                          height: 1.3,
                         ),
                       ),
                       subtitle: Text(
                         documents['Date'],
                         style: const TextStyle(
                           fontSize: 14.0,
-                          height: 2.0,
+                          height: 2.5,
                         ),
                       ),
                       leading: Text(
@@ -99,19 +121,5 @@ class _HistoryState extends State<History> {
         },
       ),
     );
-  }
-
-  void getHistory() async {
-    final QuerySnapshot result = await FirebaseFirestore.instance
-        .collection('History')
-        .doc(_userId)
-        .collection('History')
-        .get();
-
-    final List<DocumentSnapshot> documents = result.docs;
-
-    for (var element in documents) {
-      print(element['Date']);
-    }
   }
 }
