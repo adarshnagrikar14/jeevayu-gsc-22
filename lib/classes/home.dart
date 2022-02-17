@@ -21,8 +21,9 @@ class _DashBoardState extends State<DashBoard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:
-          _devState.length == 2 ? const DeviceUnpaired() : const DevicePaired(),
+      body: _devState.length == 2 || _devState.isEmpty
+          ? const DeviceUnpaired()
+          : const DevicePaired(),
     );
   }
 
