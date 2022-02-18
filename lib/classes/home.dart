@@ -61,8 +61,11 @@ class DeviceUnpaired extends StatefulWidget {
 class _DeviceUnpairedState extends State<DeviceUnpaired> {
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Dev not paired'),
+    return Scaffold(
+      backgroundColor: Colors.grey.shade900,
+      body: const Center(
+        child: Text('Dev not paired'),
+      ),
     );
   }
 }

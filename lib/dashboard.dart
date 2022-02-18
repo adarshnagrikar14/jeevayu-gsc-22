@@ -2,10 +2,9 @@
 
 import 'dart:async';
 
-import 'package:bottom_navy_bar/bottom_navy_bar.dart';
+import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.dart';
 import 'package:jeevayu/classes/notification.dart';
 import 'package:jeevayu/classes/home.dart';
-import 'package:jeevayu/classes/settings.dart';
 import 'package:jeevayu/classes/account.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,6 +33,9 @@ class _MainScreenState extends State<MainScreen> {
   // chnnel1
   static const deviceChannel = MethodChannel('com.project/deviceState');
 
+  // bottom color
+  final Color _bluedark = HexColor('25383c');
+
   @override
   void initState() {
     super.initState();
@@ -42,10 +44,11 @@ class _MainScreenState extends State<MainScreen> {
     getPref();
 
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+      SystemUiOverlayStyle(
         statusBarIconBrightness:
             Brightness.light, // change the brightness of the icons
         statusBarColor: Colors.black,
+        systemNavigationBarColor: _bluedark,
       ),
     );
   }
@@ -64,9 +67,23 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _widgetOptions = const <Widget>[
     DashBoard(),
     NotificationActivity(),
-    Settings(),
+    // Settings(),
     Account(),
   ];
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarIconBrightness:
+            Brightness.light, // change the brightness of the icons
+        statusBarColor: Colors.black,
+        systemNavigationBarColor: Colors.black87,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -126,67 +143,40 @@ class _MainScreenState extends State<MainScreen> {
         ),
 
         // Bottom nav bar
-        bottomNavigationBar: BottomNavyBar(
-          selectedIndex: _selectedIndex,
-          iconSize: 25.0,
-          containerHeight: 65.0,
-          showElevation: true,
-          curve: Curves.easeIn,
-          backgroundColor: Colors.grey[800],
-
-          // Items starting from here:
-          items: [
-            // Home Item
-            BottomNavyBarItem(
-              icon: const Icon(Icons.space_dashboard_rounded),
-              title: const Text(
-                'Home',
-                style: TextStyle(fontSize: 17),
-              ),
-              activeColor: Colors.white,
-              textAlign: TextAlign.center,
+        bottomNavigationBar: SizedBox(
+          height: 82.0,
+          child: Scaffold(
+            backgroundColor: _bluedark,
+            body: FloatingNavbar(
+              onTap: (int val) {
+                setState(() {
+                  _selectedIndex = val;
+                });
+              },
+              currentIndex: _selectedIndex,
+              backgroundColor: _bluedark,
+              borderRadius: 10.0,
+              itemBorderRadius: 50.0,
+              iconSize: 25.0,
+              unselectedItemColor: Colors.green,
+              selectedItemColor: Colors.white,
+              selectedBackgroundColor: Colors.green.shade500,
+              items: [
+                FloatingNavbarItem(
+                  icon: Icons.dashboard_rounded,
+                  title: 'Dashboard',
+                ),
+                FloatingNavbarItem(
+                  icon: Icons.notifications_none,
+                  title: 'Notification',
+                ),
+                FloatingNavbarItem(
+                  icon: Icons.account_circle_rounded,
+                  title: 'Profile',
+                ),
+              ],
             ),
-
-            // Notification Item
-            BottomNavyBarItem(
-              icon: const Icon(Icons.notifications),
-              title: const Text(
-                'Alerts',
-                style: TextStyle(fontSize: 17),
-              ),
-              activeColor: Colors.white,
-              textAlign: TextAlign.center,
-            ),
-
-            // Setting Item
-            BottomNavyBarItem(
-              icon: const Icon(Icons.settings),
-              title: const Text(
-                'Setting',
-                style: TextStyle(fontSize: 17),
-              ),
-              activeColor: Colors.white,
-              textAlign: TextAlign.center,
-            ),
-
-            // Account Item
-            BottomNavyBarItem(
-              icon: const Icon(Icons.account_circle),
-              title: const Text(
-                'Account',
-                style: TextStyle(fontSize: 17),
-              ),
-              activeColor: Colors.white,
-              textAlign: TextAlign.center,
-            ),
-          ],
-
-          // On tap Handler
-          onItemSelected: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
+          ),
         ),
         body: _widgetOptions.elementAt(_selectedIndex),
       ),
@@ -336,4 +326,16 @@ class _MainScreenState extends State<MainScreen> {
       });
     }
   }
+}
+
+class HexColor extends Color {
+  static int _getColorFromHex(String hexColor) {
+    hexColor = hexColor.toUpperCase().replaceAll("#", "");
+    if (hexColor.length == 6) {
+      hexColor = "FF" + hexColor;
+    }
+    return int.parse(hexColor, radix: 16);
+  }
+
+  HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
 }
