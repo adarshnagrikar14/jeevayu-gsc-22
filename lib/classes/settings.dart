@@ -20,7 +20,10 @@ class _SettingsState extends State<Settings> {
   late bool _allowedCommTab;
 
   // chnnel1
-  static const deviceChannel = MethodChannel('com.project/deviceState');
+  static const prefChannel = MethodChannel('com.project/deviceState');
+
+  // chnnel2
+  static const notChannel = MethodChannel('com.project/notificationControl');
 
   @override
   void initState() {
@@ -52,10 +55,10 @@ class _SettingsState extends State<Settings> {
             children: [
               const Padding(
                 padding: EdgeInsets.only(bottom: 35.0, top: 20.0),
-                child: CircleAvatar(
-                  backgroundImage:
-                      AssetImage('assets/social/icons8-medical-64.png'),
-                  radius: 60,
+                child: Image(
+                  image: AssetImage('assets/social/settings.png'),
+                  height: 120,
+                  width: 120,
                 ),
               ),
               // notification tile
@@ -235,16 +238,15 @@ class _SettingsState extends State<Settings> {
   void getPackageName() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
-    // String appName = packageInfo.appName;
-    // String packageName = packageInfo.packageName;
     String version = packageInfo.version;
     setState(() {
       _versionName = version;
     });
-    // String buildNumber = packageInfo.buildNumber;
   }
 
-  void openNotificationSetting() {}
+  void openNotificationSetting() async {
+    await notChannel.invokeMethod('openNotification');
+  }
 
   void openHistory() {
     // history page
@@ -273,7 +275,7 @@ class _SettingsState extends State<Settings> {
 
   // get the pref
   Future getPref() async {
-    final String state = await deviceChannel.invokeMethod('getPreference');
+    final String state = await prefChannel.invokeMethod('getPreference');
 
     if (state.length == 2) {
       setState(() {

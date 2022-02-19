@@ -28,12 +28,13 @@ class _HistoryState extends State<History> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[900],
       // appbar
       appBar: AppBar(
-        backgroundColor: Colors.grey[850],
-        shadowColor: Colors.grey[500],
+        backgroundColor: Colors.grey[900],
+        shadowColor: Colors.grey[900],
         toolbarHeight: 60,
-        elevation: 10,
+        elevation: 1,
         title: const Text(
           'History',
           style: TextStyle(
@@ -88,7 +89,7 @@ class _HistoryState extends State<History> {
               child: ListView(
                 children: snapshot.data!.docs.map((documents) {
                   return Card(
-                    color: Colors.grey[800],
+                    color: Colors.grey[850],
                     shadowColor: Colors.grey[300],
                     margin: const EdgeInsets.only(
                       bottom: 20.0,

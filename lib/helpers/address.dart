@@ -42,9 +42,10 @@ class _AddressUpdateState extends State<AddressUpdate> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[900],
       appBar: AppBar(
-        backgroundColor: Colors.grey[850],
-        shadowColor: Colors.grey[500],
+        backgroundColor: Colors.grey[900],
+        shadowColor: Colors.grey[850],
         toolbarHeight: 60,
         actions: <Widget>[
           PopupMenuButton<String>(
@@ -72,17 +73,20 @@ class _AddressUpdateState extends State<AddressUpdate> {
           // edit adress
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(20.0),
               child: TextFormField(
                 minLines: 6,
                 keyboardType: TextInputType.streetAddress,
                 controller: _addressController,
                 maxLength: 120,
                 decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
                   hintText: "Edit Address here...",
                   errorText: !_valid ? null : 'Address can\'t be empty input.',
                   hintMaxLines: 1,
+                  contentPadding: const EdgeInsets.all(25.0),
                 ),
                 onFieldSubmitted: (value) {
                   setState(() {
@@ -107,8 +111,22 @@ class _AddressUpdateState extends State<AddressUpdate> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(22.0),
               child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                    Colors.green,
+                  ),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      side: const BorderSide(
+                        color: Colors.lightGreen,
+                        width: 1.0,
+                      ),
+                    ),
+                  ),
+                ),
                 onPressed: () {
                   // showSnack(context, "Hello", false);
                   if (_addressController.text.isNotEmpty) {
@@ -125,7 +143,7 @@ class _AddressUpdateState extends State<AddressUpdate> {
                 child: const Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: 30.0,
-                    vertical: 10.0,
+                    vertical: 12.0,
                   ),
                   child: Text(
                     "UPDATE",

@@ -3,8 +3,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:jeevayu/helpers/address.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Account extends StatefulWidget {
@@ -21,19 +19,12 @@ class _AccountState extends State<Account> {
   late String _profile;
   late String _number = "";
   late String _address = "";
-  late String _userId;
 
   // T&C url:
   final String _url_terms_and_condition = 'https://flutter.dev';
 
   // controller
   final TextEditingController _phoneController = TextEditingController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final GlobalKey<FormFieldState> _phoneFormKey = GlobalKey<FormFieldState>();
-
-  bool _isFormValid() {
-    return ((_phoneFormKey.currentState!.isValid));
-  }
 
   // init
   @override
@@ -44,7 +35,6 @@ class _AccountState extends State<Account> {
       _name = user!.displayName!;
       _email = user!.email!;
       _profile = user!.photoURL!;
-      _userId = user!.uid;
     });
 
     fetchNumber(user!.uid);

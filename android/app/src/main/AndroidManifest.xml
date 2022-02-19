@@ -16,7 +16,7 @@
 
     <application
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_foreground"
         android:label="Jeevayu">
         <activity
             android:name=".MainActivity"

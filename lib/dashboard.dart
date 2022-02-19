@@ -96,7 +96,7 @@ class _MainScreenState extends State<MainScreen> {
         // Appbar:
         appBar: AppBar(
           title: Text(
-            _selectedIndex == 2 ? '' : ' Jeevayu',
+            _selectedIndex == 2 ? ' ' : ' Jeevayu',
             style: GoogleFonts.redressed(
                 //satisfy, courgette
                 textStyle: const TextStyle(
