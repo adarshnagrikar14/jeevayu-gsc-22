@@ -10,8 +10,9 @@ class NotificationActivity extends StatefulWidget {
 class _NotificationActivityState extends State<NotificationActivity> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
+    return Scaffold(
+      backgroundColor: Colors.grey.shade900,
+      body: const Center(
         child: Text('Notification'),
       ),
     );

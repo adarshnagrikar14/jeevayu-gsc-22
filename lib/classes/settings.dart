@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:jeevayu/helpers/address.dart';
 import 'package:jeevayu/helpers/history.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -35,27 +36,47 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade900,
+      appBar: AppBar(
+        title: const Text(
+          'Settings',
+        ),
+        backgroundColor: Colors.grey.shade900,
+        elevation: 0,
+        toolbarHeight: 60.0,
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
+              const Padding(
+                padding: EdgeInsets.only(bottom: 35.0, top: 20.0),
+                child: CircleAvatar(
+                  backgroundImage:
+                      AssetImage('assets/social/icons8-medical-64.png'),
+                  radius: 60,
+                ),
+              ),
               // notification tile
               ListTile(
-                subtitle:
-                    const Text('Customize the way notification is displayed'),
+                subtitle: const Text(
+                  'Customize the way notification is displayed',
+                  style: TextStyle(fontSize: 13.0),
+                ),
+                leading: Icon(
+                  Icons.notifications_none,
+                  size: 25.0,
+                  color: Colors.green.shade400,
+                ),
                 onTap: () {
                   openNotificationSetting();
                 },
                 title: const Text(
                   'Notifications',
                   style: TextStyle(
-                    fontSize: 20.0,
+                    fontSize: 18.0,
                   ),
-                ),
-                trailing: const Icon(
-                  Icons.arrow_forward_ios,
-                  size: 20.0,
                 ),
               ),
 
@@ -66,19 +87,23 @@ class _SettingsState extends State<Settings> {
 
               // hist tile
               ListTile(
-                subtitle: const Text('See previous activities'),
+                subtitle: const Text(
+                  'See previous activities',
+                  style: TextStyle(fontSize: 13.0),
+                ),
                 onTap: () {
                   openHistory();
                 },
+                leading: Icon(
+                  Icons.history,
+                  size: 25.0,
+                  color: Colors.green.shade400,
+                ),
                 title: const Text(
                   'History',
                   style: TextStyle(
-                    fontSize: 20.0,
+                    fontSize: 18.0,
                   ),
-                ),
-                trailing: const Icon(
-                  Icons.arrow_forward_ios,
-                  size: 20.0,
                 ),
               ),
 
@@ -89,20 +114,54 @@ class _SettingsState extends State<Settings> {
 
               // comm tile
               ListTile(
-                subtitle:
-                    const Text('Communicate the registered service provider'),
+                subtitle: const Text(
+                  'Communicate the registered service provider',
+                  style: TextStyle(fontSize: 13.0),
+                ),
                 onTap: () {
                   openCommunicationTab();
                 },
+                leading: Icon(
+                  Icons.comment_outlined,
+                  size: 25.0,
+                  color: Colors.green.shade400,
+                ),
                 title: const Text(
                   'Communication',
                   style: TextStyle(
-                    fontSize: 20.0,
+                    fontSize: 18.0,
                   ),
                 ),
-                trailing: const Icon(
-                  Icons.arrow_forward_ios,
-                  size: 20.0,
+              ),
+
+              const Divider(
+                height: 1.0,
+                color: Colors.grey,
+              ),
+
+              // comm tile
+              ListTile(
+                subtitle: const Text(
+                  'Update the address you provided.',
+                  style: TextStyle(fontSize: 13.0),
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AddressUpdate()),
+                  );
+                },
+                leading: Icon(
+                  Icons.location_on_outlined,
+                  size: 25.0,
+                  color: Colors.green.shade400,
+                ),
+                title: const Text(
+                  'Update Address',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                  ),
                 ),
               ),
 
@@ -113,42 +172,57 @@ class _SettingsState extends State<Settings> {
 
               // help tile
               ListTile(
-                subtitle: const Text(
+                title: const Text(
                   'Help Center',
-                  style: TextStyle(fontSize: 17.0),
+                  style: TextStyle(fontSize: 17.0, color: Colors.white),
                 ),
                 onTap: () {
                   openHelp();
                 },
+                leading: Icon(
+                  Icons.help_outline,
+                  size: 25.0,
+                  color: Colors.green.shade400,
+                ),
               ),
 
               // pp tile
               ListTile(
-                subtitle: const Text(
+                title: const Text(
                   'Privacy Policy',
-                  style: TextStyle(fontSize: 17.0),
+                  style: TextStyle(fontSize: 17.0, color: Colors.white),
                 ),
                 onTap: () {
                   openPP();
                 },
+                leading: Icon(
+                  Icons.privacy_tip_outlined,
+                  size: 25.0,
+                  color: Colors.green.shade400,
+                ),
               ),
 
               // about tile
               ListTile(
-                subtitle: const Text(
+                title: const Text(
                   'About Us',
-                  style: TextStyle(fontSize: 17.0),
+                  style: TextStyle(fontSize: 17.0, color: Colors.white),
                 ),
                 onTap: () {
                   openAbout();
                 },
+                leading: Icon(
+                  Icons.info_outline,
+                  size: 25.0,
+                  color: Colors.green.shade400,
+                ),
               ),
 
               // version tile
               ListTile(
                 subtitle: Text(
                   'Version $_versionName',
-                  style: const TextStyle(fontSize: 17.0),
+                  style: const TextStyle(fontSize: 16.0, color: Colors.white70),
                 ),
               ),
             ],

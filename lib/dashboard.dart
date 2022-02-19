@@ -2,14 +2,16 @@
 
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:jeevayu/classes/notification.dart';
 import 'package:jeevayu/classes/home.dart';
 import 'package:jeevayu/classes/account.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:jeevayu/classes/settings.dart';
 import 'package:jeevayu/features/video_message.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -21,12 +23,6 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  // youtube url
-  final String _url_youtube = "https://youtube.com";
-
-  // terms url
-  final String _url_terms = "https://youtube.com";
-
   // msg to display
   late bool _allowVideoMsg;
 
@@ -35,6 +31,9 @@ class _MainScreenState extends State<MainScreen> {
 
   // bottom color
   final Color _bluedark = HexColor('25383c');
+
+  final User? user = FirebaseAuth.instance.currentUser;
+  late String _profile;
 
   @override
   void initState() {
@@ -51,6 +50,11 @@ class _MainScreenState extends State<MainScreen> {
         systemNavigationBarColor: _bluedark,
       ),
     );
+
+    // get profile
+    setState(() {
+      _profile = user!.photoURL!;
+    });
   }
 
   Future<bool> onBackPress() {
@@ -73,8 +77,6 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void dispose() {
-    super.dispose();
-
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarIconBrightness:
@@ -83,6 +85,7 @@ class _MainScreenState extends State<MainScreen> {
         systemNavigationBarColor: Colors.black87,
       ),
     );
+    super.dispose();
   }
 
   @override
@@ -92,17 +95,40 @@ class _MainScreenState extends State<MainScreen> {
       child: Scaffold(
         // Appbar:
         appBar: AppBar(
-          title: const Text(
-            'Jeevayu',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w500,
-            ),
+          title: Text(
+            _selectedIndex == 2 ? '' : ' Jeevayu',
+            style: GoogleFonts.redressed(
+                //satisfy, courgette
+                textStyle: const TextStyle(
+              fontSize: 30.0,
+              fontWeight: FontWeight.bold,
+            )),
           ),
           actions: <Widget>[
+            // settings
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: GestureDetector(
+                child: const Tooltip(
+                  triggerMode: TooltipTriggerMode.longPress,
+                  message: "Qr Scan",
+                  child: Icon(
+                    Icons.qr_code_scanner,
+                    size: 25.0,
+                  ),
+                ),
+                onTap: () {
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (context) => const Settings()),
+                  // );
+                },
+              ),
+            ),
+
             // help
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: GestureDetector(
                 child: const Tooltip(
                   triggerMode: TooltipTriggerMode.longPress,
@@ -119,27 +145,31 @@ class _MainScreenState extends State<MainScreen> {
               ),
             ),
 
-            // other options
+            // settings
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5.0),
-              child: PopupMenuButton<String>(
-                onSelected: handleClick,
-                iconSize: 28.0,
-                itemBuilder: (BuildContext context) {
-                  return {'Help', 'Terms and Conditions', 'Feedback'}
-                      .map((String choice) {
-                    return PopupMenuItem<String>(
-                      value: choice,
-                      child: Text(choice),
-                    );
-                  }).toList();
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: GestureDetector(
+                child: const Tooltip(
+                  triggerMode: TooltipTriggerMode.longPress,
+                  message: "Settings",
+                  child: Icon(
+                    Icons.settings,
+                    size: 25.0,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Settings()),
+                  );
                 },
               ),
             ),
           ],
           toolbarHeight: 60.0,
-          backgroundColor: Colors.grey[850],
-          shadowColor: Colors.grey[400],
+          backgroundColor: Colors.grey[900],
+          elevation: 0,
+          // shadowColor: Colors.grey[400],
         ),
 
         // Bottom nav bar
@@ -158,7 +188,7 @@ class _MainScreenState extends State<MainScreen> {
               borderRadius: 10.0,
               itemBorderRadius: 50.0,
               iconSize: 25.0,
-              unselectedItemColor: Colors.green,
+              unselectedItemColor: Colors.green.shade100,
               selectedItemColor: Colors.white,
               selectedBackgroundColor: Colors.green.shade500,
               items: [
@@ -171,7 +201,11 @@ class _MainScreenState extends State<MainScreen> {
                   title: 'Notification',
                 ),
                 FloatingNavbarItem(
-                  icon: Icons.account_circle_rounded,
+                  // icon: Icons.account_circle_rounded,
+                  customWidget: CircleAvatar(
+                    backgroundImage: NetworkImage(_profile),
+                    radius: 12,
+                  ),
                   title: 'Profile',
                 ),
               ],
@@ -181,31 +215,6 @@ class _MainScreenState extends State<MainScreen> {
         body: _widgetOptions.elementAt(_selectedIndex),
       ),
     );
-  }
-
-  void handleClick(String value) {
-    switch (value) {
-      case 'Help':
-        openYoutube();
-        break;
-      case 'Terms and Conditions':
-        openTerms();
-        break;
-    }
-  }
-
-  // open yt
-  void openYoutube() async {
-    if (!await launch(_url_youtube)) {
-      throw 'Could not open Terms and condition!';
-    }
-  }
-
-  // open t&c
-  void openTerms() async {
-    if (!await launch(_url_terms)) {
-      throw 'Could not open Terms and condition!';
-    }
   }
 
   openVideoDialog() {

@@ -60,11 +60,12 @@ class _AccountState extends State<Account> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[900],
       // scrolview
       body: SingleChildScrollView(
         // padding all over
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 10.0),
+          padding: const EdgeInsets.fromLTRB(10.0, 40.0, 10.0, 40.0),
 
           // main body
           child: Column(
@@ -74,18 +75,6 @@ class _AccountState extends State<Account> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // image
-                  Expanded(
-                    child: CircleAvatar(
-                      backgroundImage: NetworkImage(_profile),
-                      radius: 45,
-                    ),
-                    flex: 2,
-                  ),
-                  const SizedBox(
-                    width: 20.0,
-                  ),
-
                   // name and email
                   Expanded(
                     child: Column(
@@ -95,6 +84,7 @@ class _AccountState extends State<Account> {
                         Padding(
                           padding: const EdgeInsets.symmetric(
                             vertical: 10.0,
+                            horizontal: 15.0,
                           ),
                           child: Text(
                             _name,
@@ -106,79 +96,56 @@ class _AccountState extends State<Account> {
                           ),
                         ),
                         FittedBox(
-                          child: Text(
-                            _email,
-                            style: const TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.w200,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 15.0),
+                            child: Text(
+                              _number,
+                              style: const TextStyle(
+                                fontSize: 17.0,
+                                fontWeight: FontWeight.w200,
+                                color: Colors.white70,
+                              ),
+                              textAlign: TextAlign.start,
                             ),
-                            textAlign: TextAlign.start,
+                          ),
+                        ),
+                        FittedBox(
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.only(left: 15.0, top: 8.0),
+                            child: Text(
+                              _email,
+                              style: const TextStyle(
+                                fontSize: 17.0,
+                                fontWeight: FontWeight.w200,
+                                color: Colors.white70,
+                              ),
+                              textAlign: TextAlign.start,
+                            ),
                           ),
                         ),
                       ],
                     ),
-                    flex: 5,
-                  ),
-                ],
-              ),
-
-              // divider 1
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10.0),
-                child: Divider(
-                  height: 2.0,
-                  color: Colors.grey,
-                ),
-              ),
-
-              // number
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10.0),
-                child: Text(
-                  'My Number',
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-
-              // number getting:
-              Row(
-                children: [
-                  // field
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        border: const OutlineInputBorder(),
-                        hintText:
-                            _number.isEmpty ? 'Getting number...' : _number,
-                        hintStyle: const TextStyle(
-                          fontSize: 18,
-                          color: Colors.white70,
-                        ),
-                      ),
-                      enabled: false,
-                    ),
                     flex: 6,
                   ),
 
-                  // edit number
+                  // image
                   Expanded(
-                    child: GestureDetector(
-                      onTap: () => _registerDialogBox(context),
-                      child: const Icon(
-                        Icons.edit,
-                      ),
+                    child: CircleAvatar(
+                      backgroundImage: NetworkImage(_profile),
+                      radius: 45,
                     ),
-                    flex: 1,
-                  )
+                    flex: 2,
+                  ),
+                  const SizedBox(
+                    width: 20.0,
+                  ),
                 ],
               ),
 
               // Address
               const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10.0),
+                padding: EdgeInsets.only(top: 50.0, left: 15.0, bottom: 20.0),
                 child: Text(
                   'My Address',
                   style: TextStyle(
@@ -189,47 +156,36 @@ class _AccountState extends State<Account> {
               ),
 
               // Address getting
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      minLines: 6,
-                      keyboardType: TextInputType.multiline,
-                      decoration: InputDecoration(
-                        border: const OutlineInputBorder(),
-                        hintText:
-                            _address.isEmpty ? 'Getting address...' : _address,
-                        hintStyle: const TextStyle(color: Colors.white70),
-                        hintMaxLines: 10,
-                        enabled: false,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        minLines: 6,
+                        keyboardType: TextInputType.multiline,
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.all(20.0),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20.0)),
+                          hintText: _address.isEmpty
+                              ? 'Getting address...'
+                              : _address,
+                          hintStyle: const TextStyle(color: Colors.white70),
+                          hintMaxLines: 10,
+                          enabled: false,
+                        ),
+                        maxLines: null,
                       ),
-                      maxLines: null,
+                      flex: 6,
                     ),
-                    flex: 6,
-                  ),
-
-                  // edit Address
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const AddressUpdate()),
-                        );
-                      },
-                      child: const Icon(
-                        Icons.edit,
-                      ),
-                    ),
-                    flex: 1,
-                  )
-                ],
+                  ],
+                ),
               ),
 
               // divider 2
               const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10.0),
+                padding: EdgeInsets.only(top: 30.0),
                 child: Divider(
                   height: 2.0,
                   color: Colors.grey,
@@ -243,7 +199,10 @@ class _AccountState extends State<Account> {
                   children: const [
                     // info icon
                     Expanded(
-                      child: Icon(Icons.info_outline_rounded),
+                      child: Icon(
+                        Icons.info_outline_rounded,
+                        color: Colors.white,
+                      ),
                       flex: 1,
                     ),
                     SizedBox(
@@ -253,6 +212,10 @@ class _AccountState extends State<Account> {
                     Expanded(
                       child: Text(
                         'Your profile data may be shared with service provider to get in touch with you for the service offered. Read T&C below.',
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          color: Colors.white,
+                        ),
                       ),
                       flex: 5,
                     )
@@ -317,102 +280,6 @@ class _AccountState extends State<Account> {
         _address = 'No Address found!';
       });
     }
-  }
-
-  // update Number
-  void _updateNumber(BuildContext context, String _userId) {
-    var docRef = FirebaseFirestore.instance.collection('Mobiles').doc(_userId);
-
-    // setting number in docRef:
-    docRef.set({'Number': _phoneController.text}).onError(
-      (error, stackTrace) {
-        showSnack(context, 'Error occured , retry', true);
-        Navigator.pop(context);
-      },
-    ).whenComplete(
-      () {
-        showSnack(context, "Successfully changed", false);
-        Navigator.pop(context);
-      },
-    );
-  }
-
-  // number update dialog
-  Future<String?> _registerDialogBox(BuildContext context) async {
-    return await showDialog<String>(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        bool _isSubmitButtonEnabled = false;
-        return StatefulBuilder(builder: (context, setState) {
-          return AlertDialog(
-            backgroundColor: Colors.grey[850],
-            scrollable: true,
-            title: const Text('Update Number'),
-            content: Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: <Widget>[
-                    TextFormField(
-                        key: _phoneFormKey,
-                        maxLength: 10,
-                        controller: _phoneController,
-                        keyboardType: TextInputType.phone,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(
-                            RegExp("[0-9+]"),
-                          )
-                        ],
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          prefixText: '+91  ',
-                          prefixStyle: TextStyle(
-                            fontSize: 18.0,
-                          ),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            _isSubmitButtonEnabled = _isFormValid();
-                            _phoneFormKey.currentState!.validate();
-                          });
-                        },
-                        validator: (value) {
-                          if (value!.length < 10) {
-                            return 'Number can\'t be less than 10';
-                          } else {
-                            return null;
-                          }
-                        }),
-                  ],
-                ),
-              ),
-            ),
-            actions: [
-              // cancel btn
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.grey[850],
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text("Cancel"),
-              ),
-
-              // update btn
-              ElevatedButton(
-                child: const Text("Update"),
-                onPressed: _isSubmitButtonEnabled
-                    ? () => _updateNumber(context, _userId)
-                    : null,
-              ),
-            ],
-          );
-        });
-      },
-    );
   }
 
   void openTerms() async {
