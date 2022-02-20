@@ -152,6 +152,7 @@ class _SettingsState extends State<Settings> {
                   style: TextStyle(fontSize: 13.0),
                 ),
                 onTap: () {
+                  getNum();
                   openCommunicationTab();
                 },
                 leading: Icon(
@@ -290,7 +291,7 @@ class _SettingsState extends State<Settings> {
 
   void openCommunicationTab() {
     getPref();
-    getNum();
+
     if (_allowedCommTab) {
       showCommDialog(true);
     } else {

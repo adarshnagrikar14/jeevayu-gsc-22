@@ -12,6 +12,7 @@ class _VideoMessageState extends State<VideoMessage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[900],
       appBar: AppBar(
         title: const Text(
           'Record Message',
@@ -19,8 +20,8 @@ class _VideoMessageState extends State<VideoMessage> {
             fontSize: 20.0,
           ),
         ),
-        backgroundColor: Colors.grey[850],
-        shadowColor: Colors.grey[500],
+        backgroundColor: Colors.grey[900],
+        shadowColor: Colors.grey[850],
         toolbarHeight: 60,
         elevation: 10,
       ),
