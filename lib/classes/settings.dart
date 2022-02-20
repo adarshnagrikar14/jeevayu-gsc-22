@@ -108,7 +108,7 @@ class _SettingsState extends State<Settings> {
                 title: const Text(
                   'Notifications',
                   style: TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 17.0,
                   ),
                 ),
               ),
@@ -135,7 +135,7 @@ class _SettingsState extends State<Settings> {
                 title: const Text(
                   'History',
                   style: TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 17.0,
                   ),
                 ),
               ),
@@ -163,7 +163,7 @@ class _SettingsState extends State<Settings> {
                 title: const Text(
                   'Communication',
                   style: TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 17.0,
                   ),
                 ),
               ),
@@ -194,7 +194,7 @@ class _SettingsState extends State<Settings> {
                 title: const Text(
                   'Update Address',
                   style: TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 17.0,
                   ),
                 ),
               ),
@@ -208,7 +208,7 @@ class _SettingsState extends State<Settings> {
               ListTile(
                 title: const Text(
                   'Help Center',
-                  style: TextStyle(fontSize: 17.0, color: Colors.white),
+                  style: TextStyle(fontSize: 16.0, color: Colors.white),
                 ),
                 onTap: () {
                   openHelp();
@@ -224,7 +224,7 @@ class _SettingsState extends State<Settings> {
               ListTile(
                 title: const Text(
                   'Privacy Policy',
-                  style: TextStyle(fontSize: 17.0, color: Colors.white),
+                  style: TextStyle(fontSize: 16.0, color: Colors.white),
                 ),
                 onTap: () {
                   openPP();
@@ -240,7 +240,7 @@ class _SettingsState extends State<Settings> {
               ListTile(
                 title: const Text(
                   'About Us',
-                  style: TextStyle(fontSize: 17.0, color: Colors.white),
+                  style: TextStyle(fontSize: 16.0, color: Colors.white),
                 ),
                 onTap: () {
                   openAbout();
@@ -256,7 +256,7 @@ class _SettingsState extends State<Settings> {
               ListTile(
                 subtitle: Text(
                   'Version $_versionName',
-                  style: const TextStyle(fontSize: 16.0, color: Colors.white70),
+                  style: const TextStyle(fontSize: 15.0, color: Colors.white70),
                 ),
               ),
             ],
@@ -376,7 +376,7 @@ class _SettingsState extends State<Settings> {
                             ? "Contact No. - $_number \nThis is the contact no. of Service provider."
                             : "No Service provider found. Try connecting the device.",
                         style: const TextStyle(
-                          fontSize: 18.0,
+                          fontSize: 17.0,
                           height: 1.3,
                         ),
                         textAlign: TextAlign.center,
