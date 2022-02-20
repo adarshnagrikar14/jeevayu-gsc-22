@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -10,28 +12,63 @@ class DashBoard extends StatefulWidget {
 
 class _DashBoardState extends State<DashBoard> {
   static const deviceChannel = MethodChannel('com.project/deviceState');
-  late String _devState = "no";
+  static const method1 = MethodChannel('com.project/DeviceID');
+
+  late String _devID = "";
 
   @override
   void initState() {
     super.initState();
-    getPref();
+    getID();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _devState.length == 2 || _devState.isEmpty
-          ? const DeviceUnpaired()
-          : const DevicePaired(),
+      backgroundColor: Colors.grey[900],
+      // body: _devState.length == 2 || _devState.isEmpty
+      body: _devID.isEmpty
+          ? const Center(
+              child: Text('No Device Paired'),
+            )
+          : Center(
+              child: Text(_devID),
+            ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setDevIDNo();
+        },
+        child: const Icon(Icons.stop_circle),
+      ),
     );
   }
 
-  Future getPref() async {
-    final String state = await deviceChannel.invokeMethod('getPreference');
+  Future getID() async {
+    final String _val = await method1.invokeMethod('getDeviceID');
     setState(() {
-      _devState = state;
+      _devID = _val;
     });
+    if (_devID.isEmpty) {
+      print('Trig 1');
+      setPrefNo();
+    } else if (_devID.length > 2) {
+      print('Trig 2');
+      setPrefYes();
+    }
+  }
+
+  Future setPrefNo() async {
+    await deviceChannel.invokeMethod('setPreferenceNo');
+  }
+
+  Future setPrefYes() async {
+    await deviceChannel.invokeMethod('setPreferenceYes');
+  }
+
+  Future<void> setDevIDNo() async {
+    var data = <String, dynamic>{"data": ""};
+    String value = await method1.invokeMethod("setDeviceID", data);
+    print(value);
   }
 }
 

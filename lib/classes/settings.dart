@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jeevayu/helpers/address.dart';
@@ -25,6 +26,10 @@ class _SettingsState extends State<Settings> {
   // chnnel2
   static const notChannel = MethodChannel('com.project/notificationControl');
 
+  static const method1 = MethodChannel('com.project/DeviceID');
+  late String _devID = "";
+  late String _number = "";
+
   @override
   void initState() {
     super.initState();
@@ -34,6 +39,31 @@ class _SettingsState extends State<Settings> {
 
     // get pref for displaying msg
     getPref();
+
+    // get id
+    getID();
+
+    // get no.
+    getNum();
+  }
+
+  Future getID() async {
+    final String _val = await method1.invokeMethod('getDeviceID');
+    setState(() {
+      _devID = _val;
+    });
+  }
+
+  Future getNum() async {
+    var collection = FirebaseFirestore.instance.collection('Providers');
+    var docSnapshot = await collection.doc(_devID).get();
+    if (docSnapshot.exists) {
+      Map<String, dynamic>? data = docSnapshot.data();
+      String _value = data?['Number'];
+      setState(() {
+        _number = _value;
+      });
+    }
   }
 
   @override
@@ -260,6 +290,7 @@ class _SettingsState extends State<Settings> {
 
   void openCommunicationTab() {
     getPref();
+    getNum();
     if (_allowedCommTab) {
       showCommDialog(true);
     } else {
@@ -341,10 +372,11 @@ class _SettingsState extends State<Settings> {
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         _allowed
-                            ? "Contact No. - "
+                            ? "Contact No. - $_number \nThis is the contact no. of Service provider."
                             : "No Service provider found. Try connecting the device.",
                         style: const TextStyle(
                           fontSize: 18.0,
+                          height: 1.3,
                         ),
                         textAlign: TextAlign.center,
                       ),

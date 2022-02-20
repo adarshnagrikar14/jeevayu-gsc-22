@@ -7,6 +7,8 @@ import android.provider.Settings;
 
 import androidx.annotation.NonNull;
 
+import java.util.Map;
+
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -16,6 +18,7 @@ public class MainActivity extends FlutterActivity {
 
     static final String CHANNEL1 = "com.project/deviceState";
     static final String CHANNEL2 = "com.project/notificationControl";
+    static final String CHANNEL3 = "com.project/DeviceID";
 
     @Override
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
@@ -24,6 +27,7 @@ public class MainActivity extends FlutterActivity {
         BinaryMessenger messenger = flutterEngine.getDartExecutor().getBinaryMessenger();
         MethodChannel channel1 = new MethodChannel(messenger, CHANNEL1);
         MethodChannel channel2 = new MethodChannel(messenger, CHANNEL2);
+        MethodChannel channel3 = new MethodChannel(messenger, CHANNEL3);
 
         // pref method
         channel1.setMethodCallHandler(((call, result) -> {
@@ -79,6 +83,27 @@ public class MainActivity extends FlutterActivity {
                 }
                 startActivity(intent);
 
+            }
+        });
+
+        // Device ID method (read ,update)
+        channel3.setMethodCallHandler((call, result) -> {
+            if (call.method.equals("setDeviceID")) {
+
+                final Map<String, Object> arguments = call.arguments();
+
+                String devID = (String) arguments.get("data");
+
+                SharedPreferences sharedPreferences = getSharedPreferences("DeviceID", MODE_PRIVATE);
+                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                myEdit.putString("ID", devID);
+                myEdit.apply();
+                result.success("Done");
+
+            } else if (call.method.equals("getDeviceID")) {
+                SharedPreferences sharedPreferences = getSharedPreferences("DeviceID", MODE_PRIVATE);
+                String ID = sharedPreferences.getString("ID", "");
+                result.success(ID);
             }
         });
 

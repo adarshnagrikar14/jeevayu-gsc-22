@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jeevayu/classes/settings.dart';
 import 'package:jeevayu/features/video_message.dart';
+import 'package:jeevayu/helpers/qr_reader.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -118,10 +119,10 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                 ),
                 onTap: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => const Settings()),
-                  // );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const QrReader()),
+                  );
                 },
               ),
             ),
