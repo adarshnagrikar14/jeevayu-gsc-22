@@ -53,6 +53,9 @@ class _AccountState extends State<Account> {
       backgroundColor: Colors.grey[900],
       // scrolview
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
         // padding all over
         child: Padding(
           padding: const EdgeInsets.fromLTRB(10.0, 40.0, 10.0, 40.0),

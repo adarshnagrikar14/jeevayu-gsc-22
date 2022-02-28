@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jeevayu/helpers/my_notifications.dart';
 
 class NotificationActivity extends StatefulWidget {
   const NotificationActivity({Key? key}) : super(key: key);
@@ -8,46 +9,31 @@ class NotificationActivity extends StatefulWidget {
 }
 
 class _NotificationActivityState extends State<NotificationActivity> {
-  late bool _alert;
-
-  @override
-  void initState() {
-    super.initState();
-    setState(() {
-      _alert = true;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade900,
-      body: _alert
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 40.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image(
-                      image:
-                          const AssetImage("assets/social/no_notification.png"),
-                      width: MediaQuery.of(context).size.width * 0.68,
-                    ),
-                    const Text(
-                      'No Notifications!',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 20.0, bottom: 20.0, left: 8.0),
+            child: Row(
+              children: const [
+                Padding(
+                  padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: Icon(Icons.info_outline_rounded),
                 ),
-              ),
-            )
-          : const Center(
-              child: Text('Notifications: '),
+                Expanded(
+                  child: Text(
+                      'Notificaions are Available for a particular session only.'),
+                ),
+              ],
             ),
+          ),
+          const Expanded(child: MyNotifications()),
+        ],
+      ),
     );
   }
 }

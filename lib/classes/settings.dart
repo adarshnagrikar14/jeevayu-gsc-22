@@ -79,6 +79,9 @@ class _SettingsState extends State<Settings> {
         toolbarHeight: 60.0,
       ),
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(

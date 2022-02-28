@@ -1,19 +1,16 @@
-// ignore_for_file: avoid_print
-
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 
-class History extends StatefulWidget {
-  const History({Key? key}) : super(key: key);
+class MyNotifications extends StatefulWidget {
+  const MyNotifications({Key? key}) : super(key: key);
 
   @override
-  _HistoryState createState() => _HistoryState();
+  _MyNotificationsState createState() => _MyNotificationsState();
 }
 
-class _HistoryState extends State<History> {
+class _MyNotificationsState extends State<MyNotifications> {
   final User? user = FirebaseAuth.instance.currentUser;
-
   // uid
   late String _userId;
 
@@ -29,27 +26,12 @@ class _HistoryState extends State<History> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[900],
-      // appbar
-      appBar: AppBar(
-        backgroundColor: Colors.grey[900],
-        shadowColor: Colors.grey[900],
-        toolbarHeight: 60,
-        elevation: 1,
-        title: const Text(
-          'History',
-          style: TextStyle(
-            fontSize: 20.0,
-          ),
-        ),
-      ),
-
-      // body
       body: StreamBuilder(
         // stream
         stream: FirebaseFirestore.instance
-            .collection('History')
+            .collection('Notifications')
             .doc(_userId)
-            .collection('History')
+            .collection('Notifications')
             .orderBy("Date", descending: true)
             .snapshots(),
 
@@ -64,21 +46,28 @@ class _HistoryState extends State<History> {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: const [
-                Icon(
-                  Icons.history,
-                  size: 90.0,
-                  color: Colors.grey,
-                ),
-
-                // no hist text
-                Text(
-                  'No History Found!',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 18.0,
+              children: [
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 40.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image(
+                          image: const AssetImage(
+                              "assets/social/no_notification.png"),
+                          width: MediaQuery.of(context).size.width * 0.68,
+                        ),
+                        const Text(
+                          'No Notifications!',
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  textAlign: TextAlign.center,
                 )
               ],
             );
@@ -92,14 +81,19 @@ class _HistoryState extends State<History> {
                 ),
                 children: snapshot.data!.docs.map((documents) {
                   return Card(
-                    color: Colors.grey[850],
+                    // color: Colors.grey[850],
+                    color: customColor(documents["Type"]),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0)),
                     shadowColor: Colors.grey[300],
                     margin: const EdgeInsets.only(
                       bottom: 20.0,
+                      left: 7.0,
+                      right: 7.0,
                     ),
                     child: ListTile(
                       title: Text(
-                        "Registered Device Id : " + documents['DeviceID'] + " ",
+                        "Message : " + documents['Body'] + " ",
                         style: const TextStyle(
                           fontSize: 17.0,
                           height: 1.3,
@@ -115,7 +109,8 @@ class _HistoryState extends State<History> {
                       leading: Text(
                         documents['Time'],
                       ),
-                      trailing: const Icon(Icons.history_toggle_off),
+                      // trailing: const Icon(Icons.history_toggle_off),
+                      trailing: customIcon(documents['Type']),
                     ),
                   );
                 }).toList(),
@@ -125,5 +120,21 @@ class _HistoryState extends State<History> {
         },
       ),
     );
+  }
+}
+
+customColor(document) {
+  if (document == "Alert") {
+    return Colors.red.shade300;
+  } else {
+    return Colors.grey[850];
+  }
+}
+
+customIcon(document) {
+  if (document == "Alert") {
+    return const Icon(Icons.notifications_on_outlined);
+  } else {
+    return const Icon(Icons.message_outlined);
   }
 }
