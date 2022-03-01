@@ -2,17 +2,22 @@
 
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:jeevayu/classes/notification.dart';
 import 'package:jeevayu/classes/home.dart';
 import 'package:jeevayu/classes/account.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:jeevayu/classes/settings.dart';
+// ignore: library_prefixes
+import 'package:jeevayu/classes/settings.dart' as SettingClass;
+import 'package:jeevayu/features/notification-api.dart';
 import 'package:jeevayu/features/video_message.dart';
 import 'package:jeevayu/helpers/qr_reader.dart';
+import 'package:jeevayu/splashscreen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -119,10 +124,7 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                 ),
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const QrReader()),
-                  );
+                  handleScan();
                 },
               ),
             ),
@@ -161,7 +163,8 @@ class _MainScreenState extends State<MainScreen> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const Settings()),
+                    MaterialPageRoute(
+                        builder: (context) => const SettingClass.Settings()),
                   );
                 },
               ),
@@ -335,6 +338,74 @@ class _MainScreenState extends State<MainScreen> {
         _allowVideoMsg = true;
       });
     }
+  }
+
+  void handleScan() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const QrReader()),
+    );
+    if (result.toString().length == 16) {
+      String liveDate =
+          DateFormat('dd/MM/yy').format(DateTime.now()).toString();
+      String liveTime = DateFormat('hh:mm a').format(DateTime.now()).toString();
+      String _id = result.toString();
+
+      FirebaseFirestore.instance.runTransaction(
+        (Transaction transaction) async {
+          DocumentReference reference = FirebaseFirestore.instance
+              .collection('Notifications')
+              .doc(user!.uid)
+              .collection("Notifications")
+              .doc();
+
+          await reference.set(
+            {
+              "Body": "Your device is registered with device ID - $_id",
+              "Date": liveDate,
+              "Time": liveTime,
+              "Type": "Message"
+            },
+          ).whenComplete(() {
+            // handle notification
+            handleNotification("Device Connected",
+                "Device is registered successfully and ready to use.");
+
+            // start activity again
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ScreenSplash(),
+              ),
+            );
+          }).onError((error, stackTrace) {
+            handleNotification("Error Occurred",
+                "There was an error connecting to the server , kindly Retry!");
+          });
+        },
+      );
+    } else {
+      var snackBar = const SnackBar(
+        content: Text(
+          "Failed to get data. Retry!",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16.0,
+          ),
+        ),
+        duration: Duration(seconds: 3),
+        backgroundColor: Colors.red,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
+  void handleNotification(String title, String body) {
+    NotificationApi.showNotification(
+      title: title,
+      body: body,
+      payload: "app.notification",
+    );
   }
 }
 

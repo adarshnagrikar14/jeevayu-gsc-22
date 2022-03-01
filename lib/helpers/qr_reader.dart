@@ -155,9 +155,9 @@ class _QrReaderState extends State<QrReader> {
     String value = await method1.invokeMethod("setDeviceID", data);
 
     if (value == "Done") {
-      Navigator.pop(context);
+      Navigator.pop(context, _value);
     } else {
-      restartACtivity();
+      Navigator.pop(context, "Failed");
     }
   }
 

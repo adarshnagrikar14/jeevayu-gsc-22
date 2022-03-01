@@ -230,6 +230,11 @@ class _AccountState extends State<Account> {
                     ),
                   ),
                 ),
+              ),
+
+              // spacing
+              const SizedBox(
+                height: 100.0,
               )
             ],
           ),
