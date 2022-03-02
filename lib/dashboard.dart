@@ -14,7 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // ignore: library_prefixes
 import 'package:jeevayu/classes/settings.dart' as SettingClass;
-import 'package:jeevayu/features/notification-api.dart';
+import 'package:jeevayu/features/notification_api.dart';
 import 'package:jeevayu/features/video_message.dart';
 import 'package:jeevayu/helpers/qr_reader.dart';
 import 'package:jeevayu/splashscreen.dart';

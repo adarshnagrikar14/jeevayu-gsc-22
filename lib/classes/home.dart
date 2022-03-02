@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jeevayu/devices-state/dev_paired.dart';
 import 'package:jeevayu/devices-state/dev_unpaired.dart';
-import 'package:jeevayu/features/notification-api.dart';
+import 'package:jeevayu/features/notification_api.dart';
 
 class DashBoard extends StatefulWidget {
   const DashBoard({Key? key}) : super(key: key);
