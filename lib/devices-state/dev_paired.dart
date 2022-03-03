@@ -44,15 +44,79 @@ class _DevicePairedState extends State<DevicePaired> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[900],
-      body: Center(
-        child: Text('Device paired - $_devID'),
-      ),
+      body: customDisplay(),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.green,
         onPressed: () {
           handleHistory();
         },
         child: const Icon(Icons.stop),
+      ),
+    );
+  }
+
+  // custom card to be displayed
+  Widget customDisplay() {
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
+      child: Column(
+        children: [
+          // info
+          Padding(
+            padding: const EdgeInsets.only(top: 20.0, bottom: 20.0, left: 8.0),
+            child: Row(
+              children: const [
+                Padding(
+                  padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: Icon(Icons.info_outline_rounded),
+                ),
+                Expanded(
+                  child: Text(
+                      'This is the real time data. In case of Emergency , use contact tab immediately.'),
+                ),
+              ],
+            ),
+          ),
+
+          // main card
+          Card(
+            color: Colors.white10,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            // shadowColor: Colors.grey.shade500,
+            elevation: 10.0,
+            margin:
+                const EdgeInsets.symmetric(horizontal: 12.0, vertical: 20.0),
+            child: SizedBox(
+              // height: 350.0,
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                children: [
+                  Row(
+                    children: const [
+                      Expanded(
+                        child: Center(),
+                        flex: 2,
+                      ),
+                      Expanded(
+                        child: Text("Hello"),
+                        flex: 5,
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+
+          // spacing
+          const SizedBox(
+            height: 200.0,
+          )
+        ],
       ),
     );
   }
