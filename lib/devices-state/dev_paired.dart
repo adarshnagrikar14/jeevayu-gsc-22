@@ -80,43 +80,68 @@ class _DevicePairedState extends State<DevicePaired> {
                 children: [
                   Row(
                     children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 20.0,
-                            top: 10.0,
-                          ),
-                          child: CircularPercentIndicator(
-                            radius: 50.0,
-                            // fillColor: Colors.amber,
-                            percent: 0.7,
-                            // progressColor: Colors.green,
-                            lineWidth: 10.0,
-                            center: const Text(
-                              '70 %',
-                              style: TextStyle(
-                                fontSize: 19.0,
-                                fontWeight: FontWeight.bold,
-                              ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 15.0,
+                          top: 14.0,
+                        ),
+                        child: CircularPercentIndicator(
+                          radius: 60.0,
+                          percent: 0.7,
+                          animation: true,
+                          backgroundColor: Colors.grey.shade700,
+                          animationDuration: 900,
+                          circularStrokeCap: CircularStrokeCap.round,
+                          lineWidth: 13.0,
+                          center: const Text(
+                            '70 %',
+                            style: TextStyle(
+                              fontSize: 25.0,
+                              fontWeight: FontWeight.w900,
                             ),
-                            linearGradient: const LinearGradient(colors: [
-                              Colors.amber,
-                              Colors.amber,
-                              Colors.amber,
+                          ),
+                          rotateLinearGradient: false,
+                          linearGradient: LinearGradient(
+                            colors: [
+                              Colors.green.shade200,
+                              Colors.green.shade400,
                               Colors.green,
-                              Colors.green,
-                              Colors.green,
-                              Colors.red,
-                              Colors.red,
-                              Colors.red,
-                            ]),
+                            ],
+                            begin: Alignment.topLeft,
                           ),
                         ),
-                        flex: 2,
                       ),
-                      const Expanded(
-                        child: Text(""),
+                      Expanded(
                         flex: 5,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 25.0, left: 35.0),
+                              child: Text(
+                                "Device ID- " + _devID,
+                                textAlign: TextAlign.start,
+                                style: const TextStyle(
+                                  height: 1.2,
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.only(
+                                  top: 18.0, left: 35.0, bottom: 8.0),
+                              child: Text(
+                                'Connected on:\n03/03/2022 | 11:02 P.M',
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  height: 1.3,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -171,10 +196,6 @@ class _DevicePairedState extends State<DevicePaired> {
               ),
             ),
           ),
-
-          // const SizedBox(
-          //   height: 30.0,
-          // ),
 
           // info
           Padding(

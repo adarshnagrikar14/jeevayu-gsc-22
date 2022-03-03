@@ -17,7 +17,7 @@ class NotificationApi {
   static Future init({bool initScheduled = false}) async {
     final android =
         // ignore: prefer_const_constructors
-        AndroidInitializationSettings('@drawable/ic_launcher-playstore.png');
+        AndroidInitializationSettings('youtube');
 
     final settings = InitializationSettings(
       android: android,
@@ -30,7 +30,7 @@ class NotificationApi {
   }
 
   static Future showNotification({
-    int id = 0,
+    int id = 100,
     String? title,
     String? body,
     String? payload,

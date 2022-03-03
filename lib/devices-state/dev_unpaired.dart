@@ -23,6 +23,7 @@ class _DeviceUnpairedState extends State<DeviceUnpaired> {
     setState(() {
       _loading = false;
     });
+    NotificationApi.init();
     super.initState();
   }
 

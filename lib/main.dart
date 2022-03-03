@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'My App',
+      title: 'Jeevayu',
       home: const ScreenSplash(), // Add Splashscreen first
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(), // set app theme

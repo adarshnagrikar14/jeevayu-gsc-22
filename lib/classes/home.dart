@@ -22,8 +22,8 @@ class _DashBoardState extends State<DashBoard> {
   @override
   void initState() {
     getID();
-    super.initState();
     NotificationApi.init();
+    super.initState();
   }
 
   @override
