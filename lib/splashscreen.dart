@@ -29,7 +29,7 @@ class _ScreenSplashState extends State<ScreenSplash> {
 
     // Timer for splashscreen
     Timer(
-      const Duration(seconds: 3),
+      const Duration(seconds: 1),
       () {
         if (user != null) {
           Navigator.of(context).pushReplacement(
@@ -53,7 +53,7 @@ class _ScreenSplashState extends State<ScreenSplash> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[850],
+      backgroundColor: Colors.grey[900],
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -64,10 +64,16 @@ class _ScreenSplashState extends State<ScreenSplash> {
             ),
             Expanded(
               child: Center(
-                child: Lottie.asset(
-                  'assets/lottie/Welcome.json',
-                  height: 160.0,
-                  repeat: false,
+                // child: Lottie.asset(
+                //   'assets/lottie/Welcome.json',
+                //   height: 160.0,
+                //   repeat: false,
+                // ),
+                child: Image(
+                  image: const AssetImage(
+                    'assets/social/splash.png',
+                  ),
+                  width: MediaQuery.of(context).size.width * 0.8,
                 ),
               ),
               flex: 15,
@@ -76,7 +82,8 @@ class _ScreenSplashState extends State<ScreenSplash> {
               flex: 1,
               child: Center(
                 child: Text(
-                  'Made with ❤ by India',
+                  // 'Thank you Frontline workers ❤',
+                  "",
                   style: TextStyle(
                     fontSize: 12.0,
                     color: Colors.white70,

@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:jeevayu/features/notification_api.dart';
 import 'package:jeevayu/splashscreen.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 
 class DevicePaired extends StatefulWidget {
   const DevicePaired({Key? key}) : super(key: key);
@@ -45,13 +46,13 @@ class _DevicePairedState extends State<DevicePaired> {
     return Scaffold(
       backgroundColor: Colors.grey[900],
       body: customDisplay(),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.green,
-        onPressed: () {
-          handleHistory();
-        },
-        child: const Icon(Icons.stop),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   backgroundColor: Colors.green,
+      //   onPressed: () {
+      //     handleHistory();
+      //   },
+      //   child: const Icon(Icons.stop),
+      // ),
     );
   }
 
@@ -63,23 +64,6 @@ class _DevicePairedState extends State<DevicePaired> {
       ),
       child: Column(
         children: [
-          // info
-          Padding(
-            padding: const EdgeInsets.only(top: 20.0, bottom: 20.0, left: 8.0),
-            child: Row(
-              children: const [
-                Padding(
-                  padding: EdgeInsets.only(left: 8.0, right: 8.0),
-                  child: Icon(Icons.info_outline_rounded),
-                ),
-                Expanded(
-                  child: Text(
-                      'This is the real time data. In case of Emergency , use contact tab immediately.'),
-                ),
-              ],
-            ),
-          ),
-
           // main card
           Card(
             color: Colors.white10,
@@ -90,32 +74,129 @@ class _DevicePairedState extends State<DevicePaired> {
             elevation: 10.0,
             margin:
                 const EdgeInsets.symmetric(horizontal: 12.0, vertical: 20.0),
-            child: SizedBox(
-              // height: 350.0,
-              width: MediaQuery.of(context).size.width,
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
               child: Column(
                 children: [
                   Row(
-                    children: const [
+                    children: [
                       Expanded(
-                        child: Center(),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            left: 20.0,
+                            top: 10.0,
+                          ),
+                          child: CircularPercentIndicator(
+                            radius: 50.0,
+                            // fillColor: Colors.amber,
+                            percent: 0.7,
+                            // progressColor: Colors.green,
+                            lineWidth: 10.0,
+                            center: const Text(
+                              '70 %',
+                              style: TextStyle(
+                                fontSize: 19.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            linearGradient: const LinearGradient(colors: [
+                              Colors.amber,
+                              Colors.amber,
+                              Colors.amber,
+                              Colors.green,
+                              Colors.green,
+                              Colors.green,
+                              Colors.red,
+                              Colors.red,
+                              Colors.red,
+                            ]),
+                          ),
+                        ),
                         flex: 2,
                       ),
-                      Expanded(
-                        child: Text("Hello"),
+                      const Expanded(
+                        child: Text(""),
                         flex: 5,
                       ),
                     ],
+                  ),
+                  const SizedBox(
+                    height: 130.0,
                   )
                 ],
               ),
             ),
           ),
 
-          // spacing
-          const SizedBox(
-            height: 200.0,
-          )
+          Card(
+            color: Colors.white10,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            // shadowColor: Colors.grey.shade500,
+            elevation: 10.0,
+            margin:
+                const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 90.0,
+                    width: MediaQuery.of(context).size.width,
+                  )
+                ],
+              ),
+            ),
+          ),
+
+          Card(
+            color: Colors.white10,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            // shadowColor: Colors.grey.shade500,
+            elevation: 10.0,
+            margin:
+                const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 90.0,
+                    width: MediaQuery.of(context).size.width,
+                  )
+                ],
+              ),
+            ),
+          ),
+
+          // const SizedBox(
+          //   height: 30.0,
+          // ),
+
+          // info
+          Padding(
+            padding: const EdgeInsets.only(top: 20.0, bottom: 20.0, left: 8.0),
+            child: Row(
+              children: const [
+                Padding(
+                  padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: Icon(
+                    Icons.info_outline_rounded,
+                    color: Colors.white60,
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    'This is the real time data. In case of Emergency, use contact tab immediately.',
+                    style: TextStyle(color: Colors.white60),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
