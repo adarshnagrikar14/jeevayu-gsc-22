@@ -1,7 +1,10 @@
 // ignore_for_file: avoid_print
 
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -21,24 +24,28 @@ class _DevicePairedState extends State<DevicePaired> {
   late String _devID = "";
 
   final User? user = FirebaseAuth.instance.currentUser;
+  final DatabaseReference _dbref = FirebaseDatabase.instance.reference();
+  late Timer _timer;
+  late int _percent = 0;
 
   @override
   void initState() {
-    super.initState();
-    getID();
-  }
-
-  Future getID() async {
-    final String _val = await method1.invokeMethod('getDeviceID');
-    setState(() {
-      _devID = _val;
+    // using timer to update data in 10 sec interval
+    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      handleWeightData(_devID);
     });
+
+    // gett the device ID
+    getID();
+
+    // init
+    super.initState();
   }
 
-  Future<void> setDevIDNo() async {
-    var data = <String, dynamic>{"data": ""};
-    String value = await method1.invokeMethod("setDeviceID", data);
-    print(value);
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   @override
@@ -87,15 +94,16 @@ class _DevicePairedState extends State<DevicePaired> {
                         ),
                         child: CircularPercentIndicator(
                           radius: 60.0,
-                          percent: 0.7,
+                          percent: _percent / 100,
                           animation: true,
                           backgroundColor: Colors.grey.shade700,
                           animationDuration: 900,
                           circularStrokeCap: CircularStrokeCap.round,
                           lineWidth: 13.0,
-                          center: const Text(
-                            '70 %',
-                            style: TextStyle(
+                          animateFromLastPercent: true,
+                          center: Text(
+                            _percent.toString() + " %",
+                            style: const TextStyle(
                               fontSize: 25.0,
                               fontWeight: FontWeight.w900,
                             ),
@@ -223,6 +231,7 @@ class _DevicePairedState extends State<DevicePaired> {
     );
   }
 
+  // handles unregistertion just after history adding
   void handleUnregister() {
     CollectionReference collection =
         FirebaseFirestore.instance.collection('Notifications');
@@ -256,12 +265,13 @@ class _DevicePairedState extends State<DevicePaired> {
     );
   }
 
+  // handles history adding as soon as it disconnects and then trig handleUnregister();
   void handleHistory() {
     String liveDate = DateFormat('dd/MM/yy').format(DateTime.now()).toString();
     String liveTime = DateFormat('hh:mm a').format(DateTime.now()).toString();
 
     FirebaseFirestore.instance.runTransaction(
-      (Transaction transaction) async {
+      (transaction) async {
         DocumentReference reference = FirebaseFirestore.instance
             .collection('History')
             .doc(user!.uid)
@@ -295,5 +305,29 @@ class _DevicePairedState extends State<DevicePaired> {
       body: t,
       payload: "app.notification",
     );
+  }
+
+  handleWeightData(String val) {
+    _dbref.child(val).child("Weight").once().then((DataSnapshot snapshot) {
+      // print(snapshot.value);
+      double _value = snapshot.value * 1.25; // for 80Kg weight = 100/80 = 1.25
+      setState(() {
+        _percent = _value.toInt();
+      });
+    });
+  }
+
+  Future<void> setDevIDNo() async {
+    var data = <String, dynamic>{"data": ""};
+    String value = await method1.invokeMethod("setDeviceID", data);
+    print(value);
+  }
+
+  Future getID() async {
+    final String _val = await method1.invokeMethod('getDeviceID');
+    setState(() {
+      _devID = _val;
+    });
+    handleWeightData(_val);
   }
 }

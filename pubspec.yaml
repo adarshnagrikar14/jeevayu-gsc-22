@@ -69,6 +69,8 @@ dependencies:
   
   percent_indicator: ^4.0.0
 
+  firebase_database: ^8.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
