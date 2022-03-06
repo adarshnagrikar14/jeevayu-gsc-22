@@ -42,6 +42,20 @@ class _DevicePairedState extends State<DevicePaired> {
     super.initState();
   }
 
+  Future<void> setDevIDNo() async {
+    var data = <String, dynamic>{"data": ""};
+    String value = await method1.invokeMethod("setDeviceID", data);
+    print(value);
+  }
+
+  Future getID() async {
+    final String _val = await method1.invokeMethod('getDeviceID');
+    setState(() {
+      _devID = _val;
+    });
+    handleWeightData(_val);
+  }
+
   @override
   void dispose() {
     _timer.cancel();
@@ -309,25 +323,11 @@ class _DevicePairedState extends State<DevicePaired> {
 
   handleWeightData(String val) {
     _dbref.child(val).child("Weight").once().then((DataSnapshot snapshot) {
-      // print(snapshot.value);
+      print(snapshot.value);
       double _value = snapshot.value * 1.25; // for 80Kg weight = 100/80 = 1.25
       setState(() {
         _percent = _value.toInt();
       });
     });
-  }
-
-  Future<void> setDevIDNo() async {
-    var data = <String, dynamic>{"data": ""};
-    String value = await method1.invokeMethod("setDeviceID", data);
-    print(value);
-  }
-
-  Future getID() async {
-    final String _val = await method1.invokeMethod('getDeviceID');
-    setState(() {
-      _devID = _val;
-    });
-    handleWeightData(_val);
   }
 }
