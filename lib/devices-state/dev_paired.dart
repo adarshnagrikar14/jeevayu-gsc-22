@@ -8,9 +8,11 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:jeevayu/dashboard.dart';
 import 'package:jeevayu/features/notification_api.dart';
 import 'package:jeevayu/splashscreen.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class DevicePaired extends StatefulWidget {
   const DevicePaired({Key? key}) : super(key: key);
@@ -28,15 +30,27 @@ class _DevicePairedState extends State<DevicePaired> {
   late Timer _timer;
   late int _percent = 0;
 
+  late String _profile;
+
+  late String _numberH = "-- --";
+  late String _addressH = "-- --\n-- --";
+  late String _nameH = "-- --";
+
+  final Color _bluedark = HexColor('25383c');
+
   @override
   void initState() {
     // using timer to update data in 10 sec interval
-    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
-      handleWeightData(_devID);
-    });
+    // _timer = Timer.periodic(const Duration(seconds: 60), (timer) {
+    //   handleWeightData(_devID);
+    // });
 
     // gett the device ID
     getID();
+
+    setState(() {
+      _profile = user!.photoURL!;
+    });
 
     // init
     super.initState();
@@ -54,6 +68,23 @@ class _DevicePairedState extends State<DevicePaired> {
       _devID = _val;
     });
     handleWeightData(_val);
+    getCommunications(_val);
+  }
+
+  Future getCommunications(String val) async {
+    var collection = FirebaseFirestore.instance.collection('Providers');
+    var docSnapshot = await collection.doc(val).get();
+    if (docSnapshot.exists) {
+      Map<String, dynamic>? data = docSnapshot.data();
+      String _num = data?['Number'];
+      String _add = data?['Address'];
+      String _nam = data?['Name'];
+      setState(() {
+        _numberH = _num;
+        _nameH = _nam;
+        _addressH = _add;
+      });
+    }
   }
 
   @override
@@ -140,7 +171,7 @@ class _DevicePairedState extends State<DevicePaired> {
                           children: [
                             Padding(
                               padding:
-                                  const EdgeInsets.only(top: 25.0, left: 35.0),
+                                  const EdgeInsets.only(top: 25.0, left: 28.0),
                               child: Text(
                                 "Device ID- " + _devID,
                                 textAlign: TextAlign.start,
@@ -153,7 +184,7 @@ class _DevicePairedState extends State<DevicePaired> {
                             ),
                             const Padding(
                               padding: EdgeInsets.only(
-                                  top: 18.0, left: 35.0, bottom: 8.0),
+                                  top: 18.0, left: 28.0, bottom: 8.0),
                               child: Text(
                                 'Connected on:\n03/03/2022 | 11:02 P.M',
                                 style: TextStyle(
@@ -175,6 +206,7 @@ class _DevicePairedState extends State<DevicePaired> {
             ),
           ),
 
+          // hospital info
           Card(
             color: Colors.white10,
             shape: RoundedRectangleBorder(
@@ -189,33 +221,261 @@ class _DevicePairedState extends State<DevicePaired> {
               child: Column(
                 children: [
                   SizedBox(
-                    height: 90.0,
+                    // height: 90.0,
                     width: MediaQuery.of(context).size.width,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // icon-h
+                        const Expanded(
+                          child: CircleAvatar(
+                            radius: 50.0,
+                            child: ClipOval(
+                              child: Image(
+                                image: AssetImage("assets/social/nurse.png"),
+                                height: 100.0,
+                                width: 100.0,
+                              ),
+                            ),
+                          ),
+                          flex: 3,
+                        ),
+
+                        // details-h
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              left: 22.0,
+                              top: 10.0,
+                              bottom: 10.0,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _nameH,
+                                  style: const TextStyle(
+                                    fontSize: 22.0,
+                                    height: 1.5,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  _addressH,
+                                  style: const TextStyle(
+                                    fontSize: 16.0,
+                                    height: 1.2,
+                                    color: Colors.white60,
+                                  ),
+                                ),
+                                Text(
+                                  _numberH,
+                                  style: const TextStyle(
+                                    fontSize: 15.0,
+                                    height: 1.8,
+                                    color: Colors.white60,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          flex: 5,
+                        ),
+                      ],
+                    ),
                   )
                 ],
               ),
             ),
           ),
 
+          // share qr card
+          GestureDetector(
+            onTap: () {
+              showModalBottomSheet(
+                  context: context,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30.0),
+                      topRight: Radius.circular(30.0),
+                    ),
+                  ),
+                  enableDrag: true,
+                  // backgroundColor: Colors.grey[850],
+                  backgroundColor: _bluedark,
+                  builder: (BuildContext context) {
+                    return SizedBox(
+                      height: 470.0,
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(
+                          parent: AlwaysScrollableScrollPhysics(),
+                        ),
+                        child: Column(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(
+                                bottom: 4.0,
+                                top: 20.0,
+                              ),
+                              child: Text(
+                                'Share QR',
+                                style: TextStyle(
+                                  fontSize: 25.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            const Text(
+                              "To Share, scan the QR below.",
+                              style: TextStyle(
+                                height: 1.3,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  bottom: 20.0, top: 10.0),
+                              child: Divider(
+                                color: Colors.grey.shade300,
+                                height: 1.2,
+                              ),
+                            ),
+                            Center(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  color: Colors.white,
+                                ),
+                                padding: const EdgeInsets.all(12.0),
+                                // color: Colors.white,
+                                child: QrImage(
+                                  data: "JzaS3ZCkpxFy88Zh",
+                                  size: 220,
+                                  gapless: false,
+                                  version: 1,
+                                  eyeStyle: const QrEyeStyle(
+                                      eyeShape: QrEyeShape.square,
+                                      color: Colors.black),
+                                ),
+                              ),
+                            ),
+
+                            // btn
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                top: 30.0,
+                              ),
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          Colors.green),
+                                  shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30.0),
+                                      side: const BorderSide(
+                                        color: Colors.lightGreen,
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  // handleScan();
+                                  Navigator.pop(context);
+                                },
+                                child: const Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 80.0,
+                                    vertical: 12.0,
+                                  ),
+                                  child: Text(
+                                    "CLOSE",
+                                    style: TextStyle(
+                                      fontSize: 23.0,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  });
+            },
+            child: Card(
+              color: Colors.white10,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              // shadowColor: Colors.grey.shade500,
+              elevation: 10.0,
+              margin:
+                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      // height: 90.0,
+                      width: MediaQuery.of(context).size.width,
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10.0),
+                        child: ListTile(
+                          title: Text(
+                            "Share this device's QR code",
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              height: 1.5,
+                            ),
+                          ),
+                          subtitle: Text(
+                            "It will enable other users to receive the status of this device.",
+                            style: TextStyle(
+                              fontSize: 15.0,
+                              height: 1.5,
+                            ),
+                          ),
+                          trailing: Icon(Icons.arrow_forward_ios),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          //
           Card(
             color: Colors.white10,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20.0),
             ),
-            // shadowColor: Colors.grey.shade500,
             elevation: 10.0,
             margin:
                 const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 90.0,
-                    width: MediaQuery.of(context).size.width,
-                  )
-                ],
-              ),
+            child: SizedBox(
+              height: 100.0,
+              width: MediaQuery.of(context).size.width,
+            ),
+          ),
+
+          //
+          Card(
+            color: Colors.white10,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            elevation: 10.0,
+            margin:
+                const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+            child: SizedBox(
+              height: 100.0,
+              width: MediaQuery.of(context).size.width,
             ),
           ),
 

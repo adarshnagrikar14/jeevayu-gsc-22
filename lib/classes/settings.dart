@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:jeevayu/helpers/address.dart';
 import 'package:jeevayu/helpers/history.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
@@ -210,11 +211,11 @@ class _SettingsState extends State<Settings> {
               // help tile
               ListTile(
                 title: const Text(
-                  'Help Center',
+                  'Feedback',
                   style: TextStyle(fontSize: 16.0, color: Colors.white),
                 ),
                 onTap: () {
-                  openHelp();
+                  openFeedback();
                 },
                 leading: Icon(
                   Icons.help_outline,
@@ -242,11 +243,11 @@ class _SettingsState extends State<Settings> {
               // about tile
               ListTile(
                 title: const Text(
-                  'About Us',
+                  'Terms and Conditions',
                   style: TextStyle(fontSize: 16.0, color: Colors.white),
                 ),
                 onTap: () {
-                  openAbout();
+                  openTandC();
                 },
                 leading: Icon(
                   Icons.info_outline,
@@ -302,11 +303,25 @@ class _SettingsState extends State<Settings> {
     }
   }
 
-  void openHelp() {}
+  void openFeedback() async {
+    if (!await launch("https://solution-challenge-22.web.app/")) {
+      throw 'Could not open Terms and condition!';
+    }
+  }
 
-  void openPP() {}
+  void openPP() async {
+    if (!await launch(
+        "https://solution-challenge-22.web.app/privacypolicy.html")) {
+      throw 'Could not open Terms and condition!';
+    }
+  }
 
-  void openAbout() {}
+  void openTandC() async {
+    if (!await launch(
+        "https://solution-challenge-22.web.app/privacypolicy.html")) {
+      throw 'Could not open Terms and condition!';
+    }
+  }
 
   // get the pref
   Future getPref() async {

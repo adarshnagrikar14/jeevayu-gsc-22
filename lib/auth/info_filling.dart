@@ -15,10 +15,11 @@ class Information extends StatefulWidget {
 
 class _InformationState extends State<Information> {
   // youtube url
-  final String _url_youtube = "https://youtube.com";
+  final String _url_pp =
+      "https://solution-challenge-22.web.app/privacypolicy.html";
 
   // terms url
-  final String _url_terms = "https://flutter.dev";
+  final String _url_terms = "https://solution-challenge-22.web.app/";
 
   // layout
   @override
@@ -32,7 +33,8 @@ class _InformationState extends State<Information> {
           PopupMenuButton<String>(
             onSelected: handleClick,
             itemBuilder: (BuildContext context) {
-              return {'Help', 'Terms and Conditions'}.map((String choice) {
+              return {'Privacy Policy', 'Terms and Conditions'}
+                  .map((String choice) {
                 return PopupMenuItem<String>(
                   value: choice,
                   child: Text(choice),
@@ -55,7 +57,7 @@ class _InformationState extends State<Information> {
 
   void handleClick(String value) {
     switch (value) {
-      case 'Help':
+      case 'Privacy Policy':
         openYoutube();
         break;
       case 'Terms and Conditions':
@@ -66,7 +68,7 @@ class _InformationState extends State<Information> {
 
   // open yt
   void openYoutube() async {
-    if (!await launch(_url_youtube)) {
+    if (!await launch(_url_pp)) {
       throw 'Could not open Terms and condition!';
     }
   }
@@ -96,7 +98,8 @@ class _FormFillState extends State<FormFill> {
   bool _isLoading = false;
 
   // t and c url:
-  final String _url_terms_and_condition = 'https://flutter.dev';
+  final String _url_terms_and_condition =
+      'https://solution-challenge-22.web.app/';
 
   // uId
   late String _userId;

@@ -16,10 +16,11 @@ class AddressUpdate extends StatefulWidget {
 
 class _AddressUpdateState extends State<AddressUpdate> {
   // youtube url
-  final String _url_youtube = "https://youtube.com";
+  final String _url_youtube = "https://solution-challenge-22.web.app/";
 
   // terms url
-  final String _url_terms = "https://flutter.dev";
+  final String _url_terms =
+      "https://solution-challenge-22.web.app/privacypolicy.html";
 
   late String _userId;
   final User? user = FirebaseAuth.instance.currentUser;
@@ -51,7 +52,8 @@ class _AddressUpdateState extends State<AddressUpdate> {
           PopupMenuButton<String>(
             onSelected: handleClick,
             itemBuilder: (BuildContext context) {
-              return {'Help', 'Terms and Conditions'}.map((String choice) {
+              return {'Privacy Policy', 'Terms and Conditions'}
+                  .map((String choice) {
                 return PopupMenuItem<String>(
                   value: choice,
                   child: Text(choice),
@@ -191,7 +193,7 @@ class _AddressUpdateState extends State<AddressUpdate> {
 
   void handleClick(String value) {
     switch (value) {
-      case 'Help':
+      case 'Privacy Policy':
         openYoutube();
         break;
       case 'Terms and Conditions':

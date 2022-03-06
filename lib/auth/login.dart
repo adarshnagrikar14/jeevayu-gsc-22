@@ -17,7 +17,8 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   // T&C url:
-  final String _url_terms_and_condition = 'https://flutter.dev';
+  final String _url_terms_and_condition =
+      'https://solution-challenge-22.web.app/';
 
   // Github url:
   final String _url_github =

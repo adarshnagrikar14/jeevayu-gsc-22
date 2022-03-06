@@ -21,7 +21,8 @@ class _AccountState extends State<Account> {
   late String _address = "";
 
   // T&C url:
-  final String _url_terms_and_condition = 'https://flutter.dev';
+  final String _url_terms_and_condition =
+      'https://solution-challenge-22.web.app/';
 
   // controller
   final TextEditingController _phoneController = TextEditingController();

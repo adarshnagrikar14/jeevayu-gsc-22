@@ -165,16 +165,20 @@ class _DeviceUnpairedState extends State<DeviceUnpaired> {
         },
       );
     } else {
-      var snackBar = const SnackBar(
-        content: Text(
+      var snackBar = SnackBar(
+        content: const Text(
           "Failed to get data. Retry!",
           style: TextStyle(
             color: Colors.white,
             fontSize: 16.0,
           ),
         ),
-        duration: Duration(seconds: 3),
+        duration: const Duration(seconds: 3),
         backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
