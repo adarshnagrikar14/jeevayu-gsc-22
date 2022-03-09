@@ -44,6 +44,7 @@ android {
         applicationId "com.rcoem.project"
         minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
+        multiDexEnabled true
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
@@ -62,6 +63,10 @@ android {
        }
    }
 
+}
+
+dependencies {
+    implementation "com.android.support:multidex:1.0.3"
 }
 
 flutter {

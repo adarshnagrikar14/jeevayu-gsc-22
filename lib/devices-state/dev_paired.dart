@@ -26,7 +26,7 @@ class _DevicePairedState extends State<DevicePaired> {
   late String _devID = "";
 
   final User? user = FirebaseAuth.instance.currentUser;
-  final DatabaseReference _dbref = FirebaseDatabase.instance.reference();
+  final DatabaseReference _dbref = FirebaseDatabase.instance.ref();
   late Timer _timer;
   late int _percent = 0;
 
@@ -582,12 +582,23 @@ class _DevicePairedState extends State<DevicePaired> {
   }
 
   handleWeightData(String val) {
-    _dbref.child(val).child("Weight").once().then((DataSnapshot snapshot) {
-      print(snapshot.value);
-      double _value = snapshot.value * 1.25; // for 80Kg weight = 100/80 = 1.25
-      setState(() {
-        _percent = _value.toInt();
+    try {
+      _dbref.child(val).child("Weight").once().then((value) {
+        print(value.snapshot.value);
+
+        // for 80Kg weight = 100/80 = 1.25
+        int _value = value.snapshot.value! as int;
+
+        double _va = (_value.toDouble()) * 1.25;
+
+        setState(() {
+          _percent = _va.toInt();
+        });
+      }).onError((error, stackTrace) {
+        print(error);
       });
-    });
+    } catch (e) {
+      print(e);
+    }
   }
 }
