@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:jeevayu/dashboard.dart';
 import 'package:jeevayu/features/notification_api.dart';
+import 'package:jeevayu/features/slider_btn.dart';
 import 'package:jeevayu/splashscreen.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -294,118 +295,10 @@ class _DevicePairedState extends State<DevicePaired> {
           // share qr card
           GestureDetector(
             onTap: () {
-              showModalBottomSheet(
-                  context: context,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30.0),
-                      topRight: Radius.circular(30.0),
-                    ),
-                  ),
-                  enableDrag: true,
-                  // backgroundColor: Colors.grey[850],
-                  backgroundColor: _bluedark,
-                  builder: (BuildContext context) {
-                    return SizedBox(
-                      height: 470.0,
-                      child: SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(
-                          parent: AlwaysScrollableScrollPhysics(),
-                        ),
-                        child: Column(
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(
-                                bottom: 4.0,
-                                top: 20.0,
-                              ),
-                              child: Text(
-                                'Share QR',
-                                style: TextStyle(
-                                  fontSize: 25.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            const Text(
-                              "To Share, scan the QR below.",
-                              style: TextStyle(
-                                height: 1.3,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  bottom: 20.0, top: 10.0),
-                              child: Divider(
-                                color: Colors.grey.shade300,
-                                height: 1.2,
-                              ),
-                            ),
-                            Center(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  color: Colors.white,
-                                ),
-                                padding: const EdgeInsets.all(12.0),
-                                // color: Colors.white,
-                                child: QrImage(
-                                  data: "JzaS3ZCkpxFy88Zh",
-                                  size: 220,
-                                  gapless: false,
-                                  version: 1,
-                                  eyeStyle: const QrEyeStyle(
-                                      eyeShape: QrEyeShape.square,
-                                      color: Colors.black),
-                                ),
-                              ),
-                            ),
-
-                            // btn
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                top: 30.0,
-                              ),
-                              child: ElevatedButton(
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          Colors.green),
-                                  shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30.0),
-                                      side: const BorderSide(
-                                        color: Colors.lightGreen,
-                                        width: 1.0,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  // handleScan();
-                                  Navigator.pop(context);
-                                },
-                                child: const Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 80.0,
-                                    vertical: 12.0,
-                                  ),
-                                  child: Text(
-                                    "CLOSE",
-                                    style: TextStyle(
-                                      fontSize: 23.0,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    );
-                  });
+              showSheet();
             },
+
+            // QR sharing
             child: Card(
               color: Colors.white10,
               shape: RoundedRectangleBorder(
@@ -449,18 +342,48 @@ class _DevicePairedState extends State<DevicePaired> {
             ),
           ),
 
-          //
-          Card(
-            color: Colors.white10,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0),
-            ),
-            elevation: 10.0,
-            margin:
-                const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
-            child: SizedBox(
-              height: 100.0,
-              width: MediaQuery.of(context).size.width,
+          // Emergency Contact
+          GestureDetector(
+            onTap: () => showEmergencySheet(),
+            child: Card(
+              color: Colors.white10,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              elevation: 10.0,
+              margin:
+                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      // height: 90.0,
+                      width: MediaQuery.of(context).size.width,
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10.0),
+                        child: ListTile(
+                          title: Text(
+                            "Emergency Contact",
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              height: 1.5,
+                            ),
+                          ),
+                          subtitle: Text(
+                            "In case of Emergency, try using this option as early as possible.",
+                            style: TextStyle(
+                              fontSize: 15.0,
+                              height: 1.5,
+                            ),
+                          ),
+                          trailing: Icon(Icons.arrow_forward_ios),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
             ),
           ),
 
@@ -503,6 +426,117 @@ class _DevicePairedState extends State<DevicePaired> {
         ],
       ),
     );
+  }
+
+  void showSheet() {
+    showModalBottomSheet(
+        context: context,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30.0),
+            topRight: Radius.circular(30.0),
+          ),
+        ),
+        enableDrag: true,
+        // backgroundColor: Colors.grey[850],
+        backgroundColor: _bluedark,
+        builder: (BuildContext context) {
+          return SizedBox(
+            height: 470.0,
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
+              child: Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(
+                      bottom: 4.0,
+                      top: 20.0,
+                    ),
+                    child: Text(
+                      'Share QR',
+                      style: TextStyle(
+                        fontSize: 25.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const Text(
+                    "To Share, scan the QR below.",
+                    style: TextStyle(
+                      height: 1.3,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20.0, top: 10.0),
+                    child: Divider(
+                      color: Colors.grey.shade300,
+                      height: 1.2,
+                    ),
+                  ),
+                  Center(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20.0),
+                        color: Colors.white,
+                      ),
+                      padding: const EdgeInsets.all(12.0),
+                      // color: Colors.white,
+                      child: QrImage(
+                        data: "JzaS3ZCkpxFy88Zh",
+                        size: 220,
+                        gapless: false,
+                        version: 1,
+                        eyeStyle: const QrEyeStyle(
+                            eyeShape: QrEyeShape.square, color: Colors.black),
+                      ),
+                    ),
+                  ),
+
+                  // btn
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 30.0,
+                    ),
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Colors.green),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                            side: const BorderSide(
+                              color: Colors.lightGreen,
+                              width: 1.0,
+                            ),
+                          ),
+                        ),
+                      ),
+                      onPressed: () {
+                        // handleScan();
+                        Navigator.pop(context);
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 80.0,
+                          vertical: 12.0,
+                        ),
+                        child: Text(
+                          "CLOSE",
+                          style: TextStyle(
+                            fontSize: 23.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   // handles unregistertion just after history adding
@@ -600,5 +634,104 @@ class _DevicePairedState extends State<DevicePaired> {
     } catch (e) {
       print(e);
     }
+  }
+
+  showEmergencySheet() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30.0),
+          topRight: Radius.circular(30.0),
+        ),
+      ),
+      enableDrag: true,
+      backgroundColor: _bluedark,
+      builder: (BuildContext context) {
+        return SizedBox(
+          height: 470.0,
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics(),
+            ),
+            child: Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(
+                    bottom: 4.0,
+                    top: 20.0,
+                  ),
+                  child: Text(
+                    'Emergency Contact',
+                    style: TextStyle(
+                      fontSize: 25.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const Text(
+                  "Use it in case of necessity.",
+                  style: TextStyle(
+                    height: 1.3,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20.0, top: 10.0),
+                  child: Divider(
+                    color: Colors.grey.shade300,
+                    height: 1.2,
+                  ),
+                ),
+
+                // main section - em
+                SliderButton(
+                  action: () {},
+                  label: const Text("Slide to call"),
+                  icon: const Icon(Icons.power_settings_new),
+                ),
+
+                // btn
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 30.0,
+                  ),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.green),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                          side: const BorderSide(
+                            color: Colors.lightGreen,
+                            width: 1.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      // handleScan();
+                      Navigator.pop(context);
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 80.0,
+                        vertical: 12.0,
+                      ),
+                      child: Text(
+                        "CLOSE",
+                        style: TextStyle(
+                          fontSize: 23.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }
