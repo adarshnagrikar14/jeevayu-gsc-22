@@ -38,6 +38,7 @@ class _DevicePairedState extends State<DevicePaired> {
   late String _nameH = "-- --";
 
   final Color _bluedark = HexColor('25383c');
+  final Color _darkGrey = HexColor('212121');
 
   @override
   void initState() {
@@ -387,41 +388,57 @@ class _DevicePairedState extends State<DevicePaired> {
             ),
           ),
 
-          //
-          Card(
-            color: Colors.white10,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0),
-            ),
-            elevation: 10.0,
-            margin:
-                const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
-            child: SizedBox(
-              height: 100.0,
-              width: MediaQuery.of(context).size.width,
+          // unregister
+          GestureDetector(
+            onTap: (() {
+              showUnregister();
+            }),
+            child: Card(
+              color: Colors.white10,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              // shadowColor: Colors.grey.shade500,
+              elevation: 10.0,
+              margin:
+                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      // height: 90.0,
+                      width: MediaQuery.of(context).size.width,
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10.0),
+                        child: ListTile(
+                          title: Text(
+                            "Unregister this Device.",
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              height: 1.5,
+                            ),
+                          ),
+                          subtitle: Text(
+                            "Stop receiving the further status of connected device.",
+                            style: TextStyle(
+                              fontSize: 15.0,
+                              height: 1.5,
+                            ),
+                          ),
+                          trailing: Icon(Icons.arrow_forward_ios),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
             ),
           ),
 
           // info
-          Padding(
-            padding: const EdgeInsets.only(top: 20.0, bottom: 20.0, left: 8.0),
-            child: Row(
-              children: const [
-                Padding(
-                  padding: EdgeInsets.only(left: 8.0, right: 8.0),
-                  child: Icon(
-                    Icons.info_outline_rounded,
-                    color: Colors.white60,
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    'This is the real time data. In case of Emergency, use contact tab immediately.',
-                    style: TextStyle(color: Colors.white60),
-                  ),
-                ),
-              ],
-            ),
+          const SizedBox(
+            height: 13.0,
           ),
         ],
       ),
@@ -646,10 +663,11 @@ class _DevicePairedState extends State<DevicePaired> {
         ),
       ),
       enableDrag: true,
-      backgroundColor: _bluedark,
+      // backgroundColor: _bluedark,
+      backgroundColor: Colors.green,
       builder: (BuildContext context) {
         return SizedBox(
-          height: 470.0,
+          height: 195.0,
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),
@@ -685,53 +703,135 @@ class _DevicePairedState extends State<DevicePaired> {
 
                 // main section - em
                 SliderButton(
-                  action: () {},
-                  label: const Text("Slide to call"),
-                  icon: const Icon(Icons.power_settings_new),
+                  action: () {
+                    Navigator.pop(context);
+                  },
+                  label: const Text(
+                    "Contact us     ",
+                    style:
+                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                  ),
+                  // icon: const ,
+                  backgroundColor: _bluedark,
+                  shimmer: false,
                 ),
-
-                // btn
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: 30.0,
-                  ),
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.green),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                          side: const BorderSide(
-                            color: Colors.lightGreen,
-                            width: 1.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                    onPressed: () {
-                      // handleScan();
-                      Navigator.pop(context);
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 80.0,
-                        vertical: 12.0,
-                      ),
-                      child: Text(
-                        "CLOSE",
-                        style: TextStyle(
-                          fontSize: 23.0,
-                        ),
-                      ),
-                    ),
-                  ),
-                )
               ],
             ),
           ),
         );
       },
     );
+  }
+
+  showUnregister() {
+    showModalBottomSheet(
+        context: context,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30.0),
+            topRight: Radius.circular(30.0),
+          ),
+        ),
+        enableDrag: true,
+        backgroundColor: _bluedark,
+        // backgroundColor: Colors.green,
+        builder: (BuildContext context) {
+          return SizedBox(
+            height: 195.0,
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
+              child: Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(
+                      bottom: 4.0,
+                      top: 30.0,
+                    ),
+                    child: Text(
+                      'Are you sure you want to unregister ?',
+                      style: TextStyle(
+                        fontSize: 25.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+
+                  // main section
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 30.0,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        // no-btn
+                        OutlinedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                                side: const BorderSide(
+                                  color: Colors.lightGreen,
+                                  width: 1.0,
+                                ),
+                              ),
+                            ),
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 21.0, vertical: 18.0),
+                            child: Text(
+                              "Cancel",
+                              style: TextStyle(
+                                  fontSize: 20.0, color: Colors.white),
+                            ),
+                          ),
+                        ),
+
+                        // btn-yes
+                        OutlinedButton(
+                          onPressed: () {
+                            handleHistory();
+                          },
+                          // style: ButtonStyle(),
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all<Color>(Colors.green),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                                side: const BorderSide(
+                                  color: Colors.lightGreen,
+                                  width: 1.0,
+                                ),
+                              ),
+                            ),
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 35.0, vertical: 16.0),
+                            child: Text(
+                              "Yes",
+                              style: TextStyle(
+                                  fontSize: 20.0, color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+          );
+        });
   }
 }

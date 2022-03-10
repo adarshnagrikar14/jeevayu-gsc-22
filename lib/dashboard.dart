@@ -52,7 +52,7 @@ class _MainScreenState extends State<MainScreen> {
       SystemUiOverlayStyle(
         statusBarIconBrightness:
             Brightness.light, // change the brightness of the icons
-        statusBarColor: Colors.black,
+        statusBarColor: Colors.grey[900],
         systemNavigationBarColor: _bluedark,
       ),
     );

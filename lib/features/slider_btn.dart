@@ -177,7 +177,13 @@ class _SliderButtonState extends State<SliderButton> {
                                 color: widget.buttonColor,
                                 borderRadius:
                                     BorderRadius.circular(widget.radius)),
-                            child: Center(child: widget.icon),
+                            child: const Center(
+                              child: Image(
+                                  image: AssetImage("assets/social/call.png"),
+                                  height: 57.0,
+                                  width: 57.0,
+                                  ),
+                            ),
                           ),
                     ),
                   ),
