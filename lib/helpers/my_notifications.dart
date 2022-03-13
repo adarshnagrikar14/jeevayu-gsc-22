@@ -91,26 +91,43 @@ class _MyNotificationsState extends State<MyNotifications> {
                       left: 7.0,
                       right: 7.0,
                     ),
-                    child: ListTile(
-                      title: Text(
-                        "Message : " + documents['Body'] + " ",
-                        style: const TextStyle(
-                          fontSize: 17.0,
-                          height: 1.3,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: ListTile(
+                        title: Padding(
+                          padding: const EdgeInsets.only(left: 5.0),
+                          child: Text(
+                            documents['Body'] + " ",
+                            style: const TextStyle(
+                              fontSize: 16.5,
+                              height: 1.3,
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        ),
+                        subtitle: Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Text(
+                            documents['Date'] + "  |  " + documents['Time'],
+                            textAlign: TextAlign.end,
+                            style: const TextStyle(
+                              fontSize: 14.0,
+                              height: 2.5,
+                            ),
+                          ),
+                        ),
+                        leading:  ClipOval(
+                          child: Container(
+                            color: Colors.grey[900],
+                            padding: const EdgeInsets.all(10.0),
+                            child: Image(
+                             image:
+                                 customIcon(documents['Type']),
+                                 height: 50,
+                                ),
+                          ),
                         ),
                       ),
-                      subtitle: Text(
-                        documents['Date'],
-                        style: const TextStyle(
-                          fontSize: 14.0,
-                          height: 2.5,
-                        ),
-                      ),
-                      leading: Text(
-                        documents['Time'],
-                      ),
-                      // trailing: const Icon(Icons.history_toggle_off),
-                      trailing: customIcon(documents['Type']),
                     ),
                   );
                 }).toList(),
@@ -125,16 +142,16 @@ class _MyNotificationsState extends State<MyNotifications> {
 
 customColor(document) {
   if (document == "Alert") {
-    return Colors.red.shade300;
+    return Colors.red;
   } else {
-    return Colors.grey[850];
+    return Colors.green;
   }
 }
 
 customIcon(document) {
   if (document == "Alert") {
-    return const Icon(Icons.notifications_on_outlined);
+    return const AssetImage("assets/social/alert-icon-red.png");
   } else {
-    return const Icon(Icons.message_outlined);
+    return const AssetImage("assets/social/notification-icon.png");
   }
 }

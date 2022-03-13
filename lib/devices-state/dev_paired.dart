@@ -40,6 +40,8 @@ class _DevicePairedState extends State<DevicePaired> {
   final Color _bluedark = HexColor('25383c');
   final Color _darkGrey = HexColor('212121');
 
+  late BuildContext _buildContext;
+
   @override
   void initState() {
     // using timer to update data in 10 sec interval
@@ -47,11 +49,12 @@ class _DevicePairedState extends State<DevicePaired> {
     //   handleWeightData(_devID);
     // });
 
-    // gett the device ID
+    // get the device ID
     getID();
 
     setState(() {
       _profile = user!.photoURL!;
+      _buildContext = context;
     });
 
     // init
@@ -200,8 +203,52 @@ class _DevicePairedState extends State<DevicePaired> {
                       ),
                     ],
                   ),
+
+                  // o2 quantity
+                  const Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 18.0,
+                    ),
+                    child: Text(
+                      "Approx Oxygen Quantity (In Litres) - 20 L",
+                      style: TextStyle(
+                        fontSize: 18.0,
+                      ),
+                    ),
+                  ),
+
+                  // current weight- total weight
+                  const Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 5.0,
+                    ),
+                    child: Text(
+                      "Current Weight- 17 KG    Total Weight- 20 KG",
+                      style: TextStyle(
+                        fontSize: 16.5,
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 5.0,
+                        horizontal: 10.0,
+                      ),
+                      child: Text(
+                        "1/5",
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+
                   const SizedBox(
-                    height: 130.0,
+                    height: 50.0,
                   )
                 ],
               ),
@@ -316,24 +363,29 @@ class _DevicePairedState extends State<DevicePaired> {
                     SizedBox(
                       // height: 90.0,
                       width: MediaQuery.of(context).size.width,
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.0),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10.0),
                         child: ListTile(
-                          title: Text(
+                          title: const Text(
                             "Share this device's QR code",
                             style: TextStyle(
                               fontSize: 20.0,
                               height: 1.5,
                             ),
                           ),
-                          subtitle: Text(
+                          subtitle: const Text(
                             "It will enable other users to receive the status of this device.",
                             style: TextStyle(
                               fontSize: 15.0,
                               height: 1.5,
                             ),
                           ),
-                          trailing: Icon(Icons.arrow_forward_ios),
+                          trailing: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(Icons.arrow_forward_ios),
+                            ],
+                          ),
                         ),
                       ),
                     )
@@ -361,24 +413,29 @@ class _DevicePairedState extends State<DevicePaired> {
                     SizedBox(
                       // height: 90.0,
                       width: MediaQuery.of(context).size.width,
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.0),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10.0),
                         child: ListTile(
-                          title: Text(
+                          title: const Text(
                             "Emergency Contact",
                             style: TextStyle(
                               fontSize: 20.0,
                               height: 1.5,
                             ),
                           ),
-                          subtitle: Text(
+                          subtitle: const Text(
                             "In case of Emergency, try using this option as early as possible.",
                             style: TextStyle(
                               fontSize: 15.0,
                               height: 1.5,
                             ),
                           ),
-                          trailing: Icon(Icons.arrow_forward_ios),
+                          trailing: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(Icons.arrow_forward_ios),
+                            ],
+                          ),
                         ),
                       ),
                     )
@@ -409,24 +466,29 @@ class _DevicePairedState extends State<DevicePaired> {
                     SizedBox(
                       // height: 90.0,
                       width: MediaQuery.of(context).size.width,
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.0),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10.0),
                         child: ListTile(
-                          title: Text(
+                          title: const Text(
                             "Unregister this Device.",
                             style: TextStyle(
                               fontSize: 20.0,
                               height: 1.5,
                             ),
                           ),
-                          subtitle: Text(
+                          subtitle: const Text(
                             "Stop receiving the further status of connected device.",
                             style: TextStyle(
                               fontSize: 15.0,
                               height: 1.5,
                             ),
                           ),
-                          trailing: Icon(Icons.arrow_forward_ios),
+                          trailing: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(Icons.arrow_forward_ios),
+                            ],
+                          ),
                         ),
                       ),
                     )
@@ -581,7 +643,7 @@ class _DevicePairedState extends State<DevicePaired> {
         setDevIDNo();
 
         Navigator.pushReplacement(
-          context,
+          _buildContext,
           MaterialPageRoute(
             builder: (context) => const ScreenSplash(),
           ),
@@ -737,7 +799,7 @@ class _DevicePairedState extends State<DevicePaired> {
         // backgroundColor: Colors.green,
         builder: (BuildContext context) {
           return SizedBox(
-            height: 195.0,
+            height: 225.0,
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(
                 parent: AlwaysScrollableScrollPhysics(),
@@ -798,6 +860,7 @@ class _DevicePairedState extends State<DevicePaired> {
                         // btn-yes
                         OutlinedButton(
                           onPressed: () {
+                            Navigator.pop(context);
                             handleHistory();
                           },
                           // style: ButtonStyle(),
