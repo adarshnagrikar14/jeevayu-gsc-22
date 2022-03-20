@@ -24,21 +24,23 @@ class DevicePaired extends StatefulWidget {
 
 class _DevicePairedState extends State<DevicePaired> {
   static const method1 = MethodChannel('com.project/DeviceID');
+  static const method2 = MethodChannel('com.project/ConnectionDate');
   late String _devID = "";
+  late String _conDate = "";
 
   final User? user = FirebaseAuth.instance.currentUser;
   final DatabaseReference _dbref = FirebaseDatabase.instance.ref();
   late Timer _timer;
   late int _percent = 0;
 
-  late String _profile;
+  // late String _profile;
 
   late String _numberH = "-- --";
   late String _addressH = "-- --\n-- --";
   late String _nameH = "-- --";
 
   final Color _bluedark = HexColor('25383c');
-  final Color _darkGrey = HexColor('212121');
+  // final Color _darkGrey = HexColor('212121');
 
   late BuildContext _buildContext;
 
@@ -52,8 +54,11 @@ class _DevicePairedState extends State<DevicePaired> {
     // get the device ID
     getID();
 
+    // get the connectin date
+    getDate();
+
     setState(() {
-      _profile = user!.photoURL!;
+      // _profile = user!.photoURL!;
       _buildContext = context;
     });
 
@@ -74,6 +79,13 @@ class _DevicePairedState extends State<DevicePaired> {
     });
     handleWeightData(_val);
     getCommunications(_val);
+  }
+
+  Future getDate() async {
+    final String _val = await method2.invokeMethod('getConnectionDate');
+    setState(() {
+      _conDate = _val;
+    });
   }
 
   Future getCommunications(String val) async {
@@ -187,12 +199,12 @@ class _DevicePairedState extends State<DevicePaired> {
                                 ),
                               ),
                             ),
-                            const Padding(
-                              padding: EdgeInsets.only(
+                            Padding(
+                              padding: const EdgeInsets.only(
                                   top: 18.0, left: 28.0, bottom: 8.0),
                               child: Text(
-                                'Connected on:\n03/03/2022 | 11:02 P.M',
-                                style: TextStyle(
+                                'Connected on:\n' + _conDate,
+                                style: const TextStyle(
                                   color: Colors.white70,
                                   height: 1.3,
                                 ),

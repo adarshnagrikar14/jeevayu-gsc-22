@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class QrReader extends StatefulWidget {
@@ -28,6 +29,7 @@ class _QrReaderState extends State<QrReader> {
   late String _QRvalue;
 
   static const method1 = MethodChannel('com.project/DeviceID');
+  static const method2 = MethodChannel('com.project/ConnectionDate');
 
   @override
   void initState() {
@@ -151,11 +153,19 @@ class _QrReaderState extends State<QrReader> {
   }
 
   Future<void> sendData(String _value) async {
+    String liveDate = DateFormat('dd/MM/yy').format(DateTime.now()).toString();
+    String liveTime = DateFormat('hh:mm a').format(DateTime.now()).toString();
+
     var data = <String, dynamic>{"data": _value};
+    var date = <String, dynamic>{"date": liveDate + " | " + liveTime};
+
     String value = await method1.invokeMethod("setDeviceID", data);
+    String value2 = await method2.invokeMethod("setConnectionDate", date);
 
     if (value == "Done") {
-      Navigator.pop(context, _value);
+      if (value2 == "Done") {
+        Navigator.pop(context, _value);
+      }
     } else {
       Navigator.pop(context, "Failed");
     }

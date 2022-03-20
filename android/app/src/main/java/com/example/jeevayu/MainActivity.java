@@ -19,6 +19,7 @@ public class MainActivity extends FlutterActivity {
     static final String CHANNEL1 = "com.project/deviceState";
     static final String CHANNEL2 = "com.project/notificationControl";
     static final String CHANNEL3 = "com.project/DeviceID";
+    static final String CHANNEL4 = "com.project/ConnectionDate";
 
     @Override
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
@@ -28,6 +29,7 @@ public class MainActivity extends FlutterActivity {
         MethodChannel channel1 = new MethodChannel(messenger, CHANNEL1);
         MethodChannel channel2 = new MethodChannel(messenger, CHANNEL2);
         MethodChannel channel3 = new MethodChannel(messenger, CHANNEL3);
+        MethodChannel channel4 = new MethodChannel(messenger, CHANNEL4);
 
         // pref method
         channel1.setMethodCallHandler(((call, result) -> {
@@ -104,6 +106,27 @@ public class MainActivity extends FlutterActivity {
                 SharedPreferences sharedPreferences = getSharedPreferences("DeviceID", MODE_PRIVATE);
                 String ID = sharedPreferences.getString("ID", "");
                 result.success(ID);
+            }
+        });
+
+        // Connection Date method (read ,update)
+        channel4.setMethodCallHandler((call, result) -> {
+            if (call.method.equals("setConnectionDate")) {
+
+                final Map<String, Object> arguments = call.arguments();
+
+                String conDate = (String) arguments.get("date");
+
+                SharedPreferences sharedPreferences = getSharedPreferences("ConnectionDate", MODE_PRIVATE);
+                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                myEdit.putString("Date", conDate);
+                myEdit.apply();
+                result.success("Done");
+
+            } else if (call.method.equals("getConnectionDate")) {
+                SharedPreferences sharedPreferences = getSharedPreferences("ConnectionDate", MODE_PRIVATE);
+                String Date = sharedPreferences.getString("Date", "");
+                result.success(Date);
             }
         });
 
