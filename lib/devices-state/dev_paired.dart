@@ -14,6 +14,7 @@ import 'package:jeevayu/features/slider_btn.dart';
 import 'package:jeevayu/splashscreen.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DevicePaired extends StatefulWidget {
   const DevicePaired({Key? key}) : super(key: key);
@@ -25,6 +26,7 @@ class DevicePaired extends StatefulWidget {
 class _DevicePairedState extends State<DevicePaired> {
   static const method1 = MethodChannel('com.project/DeviceID');
   static const method2 = MethodChannel('com.project/ConnectionDate');
+  static const method3 = MethodChannel('com.project/CylinderQuantity');
   late String _devID = "";
   late String _conDate = "";
 
@@ -32,6 +34,11 @@ class _DevicePairedState extends State<DevicePaired> {
   final DatabaseReference _dbref = FirebaseDatabase.instance.ref();
   late Timer _timer;
   late int _percent = 0;
+  late int _percentQuantity = 0;
+  late int _exactQuantity = 0;
+  late String _quantityCylinder = "";
+
+  final TextEditingController _textFieldController = TextEditingController();
 
   // late String _profile;
 
@@ -72,19 +79,34 @@ class _DevicePairedState extends State<DevicePaired> {
     print(value);
   }
 
+  Future<void> setCylQuantity(String qq) async {
+    var data = <String, dynamic>{"quantity": qq};
+    String value = await method3.invokeMethod("setQuantity", data);
+    print(value);
+  }
+
   Future getID() async {
     final String _val = await method1.invokeMethod('getDeviceID');
     setState(() {
       _devID = _val;
     });
     handleWeightData(_val);
+    handleQuantityData(_val);
     getCommunications(_val);
+    getCylQuantity();
   }
 
   Future getDate() async {
     final String _val = await method2.invokeMethod('getConnectionDate');
     setState(() {
       _conDate = _val;
+    });
+  }
+
+  Future getCylQuantity() async {
+    final String _val = await method3.invokeMethod('getQuantity');
+    setState(() {
+      _quantityCylinder = _val;
     });
   }
 
@@ -115,13 +137,6 @@ class _DevicePairedState extends State<DevicePaired> {
     return Scaffold(
       backgroundColor: Colors.grey[900],
       body: customDisplay(),
-      // floatingActionButton: FloatingActionButton(
-      //   backgroundColor: Colors.green,
-      //   onPressed: () {
-      //     handleHistory();
-      //   },
-      //   child: const Icon(Icons.stop),
-      // ),
     );
   }
 
@@ -216,52 +231,160 @@ class _DevicePairedState extends State<DevicePaired> {
                     ],
                   ),
 
-                  // o2 quantity
+                  // div
                   const Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 18.0,
-                    ),
-                    child: Text(
-                      "Approx Oxygen Quantity (In Litres) - 20 L",
-                      style: TextStyle(
-                        fontSize: 18.0,
-                      ),
+                    padding: EdgeInsets.only(top: 20.0),
+                    child: Divider(
+                      color: Colors.grey,
+                      height: 1.5,
                     ),
                   ),
 
-                  // current weight- total weight
-                  const Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 5.0,
+                  // total weight
+                  ListTile(
+                    title: const Text(
+                      "Total Quantity of O\u2082 (in ltr):",
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    child: Text(
-                      "Current Weight- 17 KG    Total Weight- 20 KG",
-                      style: TextStyle(
-                        fontSize: 16.5,
-                      ),
+                    subtitle: const Text("15\t\tL"),
+                    trailing: Image.asset(
+                      "assets/social/cyl.png",
+                      width: 45.0,
                     ),
                   ),
 
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 5.0,
-                        horizontal: 10.0,
+                  // current weight
+                  ListTile(
+                    title: Text(
+                      "Current Quantity Available:\n" +
+                          _exactQuantity.toString() +
+                          "\t\tL",
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, height: 1.5),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: LinearPercentIndicator(
+                      progressColor: Colors.green,
+                      percent: _percentQuantity / 100,
+                      backgroundColor: Colors.white24,
+                      animation: true,
+                      lineHeight: 7.0,
+                      barRadius: const Radius.circular(20.0),
+                    ),
+                  ),
+
+                  // div
+                  const Padding(
+                    padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
+                    child: Divider(
+                      color: Colors.grey,
+                      height: 1.5,
+                    ),
+                  ),
+
+                  // required quantity:
+                  ListTile(
+                    title: const Text(
+                      "Required Quantity of Cylinder",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        height: 1.5,
                       ),
-                      child: Text(
-                        "1/5",
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
+                    ),
+                    subtitle: const Text(
+                      "It will enable timely alert for next cylinder.",
+                    ),
+                    leading: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          _quantityCylinder.isEmpty || _quantityCylinder == "0"
+                              ? "1"
+                              : _quantityCylinder,
+                          style: const TextStyle(
+                            fontSize: 27.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
+                      ],
+                    ),
+                    trailing: GestureDetector(
+                      onTap: handleAddition,
+                      child: Image.asset(
+                        "assets/social/edit.png",
+                        width: 25.0,
                       ),
                     ),
                   ),
 
-                  const SizedBox(
-                    height: 50.0,
-                  )
+                  // div
+                  const Padding(
+                    padding: EdgeInsets.only(top: 10.0, bottom: 5.0),
+                    child: Divider(
+                      color: Colors.grey,
+                      height: 1.5,
+                    ),
+                  ),
+
+                  // required quantity:
+                  ListTile(
+                    title: const Text(
+                      "Current Quantity of Cylinder",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        height: 1.5,
+                      ),
+                    ),
+                    subtitle: const Text(
+                      "This is the current quantity of the total required cylinder.",
+                    ),
+                    leading: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: const [
+                        Text(
+                          "1",
+                          style: TextStyle(
+                            fontSize: 27.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    trailing: GestureDetector(
+                      onTap: handleAddition,
+                      child: Image.asset(
+                        "assets/social/present.png",
+                        width: 25.0,
+                      ),
+                    ),
+                  ),
+
+                  // div
+                  const Padding(
+                    padding: EdgeInsets.only(top: 10.0, bottom: 5.0),
+                    child: Divider(
+                      color: Colors.grey,
+                      height: 1.5,
+                    ),
+                  ),
+
+                  // cancel next cyl
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: TextButton(
+                      onPressed: () {},
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: MediaQuery.of(context).size.width / 5,
+                            vertical: 10.0),
+                        child: const Text("CANCEL NEXT"),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -727,6 +850,30 @@ class _DevicePairedState extends State<DevicePaired> {
     }
   }
 
+  handleQuantityData(String val) {
+    try {
+      _dbref.child(val).child("Quantity").once().then((value) {
+        print(value.snapshot.value);
+
+        // for 10 litre total O2:= 100/15 = 6.666
+        int _value = value.snapshot.value! as int;
+
+        double _va = (_value.toDouble()) * 6.67;
+
+        print(_va);
+
+        setState(() {
+          _percentQuantity = _va.toInt();
+          _exactQuantity = value.snapshot.value! as int;
+        });
+      }).onError((error, stackTrace) {
+        print(error);
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
   showEmergencySheet() {
     showModalBottomSheet(
       context: context,
@@ -778,6 +925,7 @@ class _DevicePairedState extends State<DevicePaired> {
                 // main section - em
                 SliderButton(
                   action: () {
+                    callHandle();
                     Navigator.pop(context);
                   },
                   label: const Text(
@@ -908,5 +1056,57 @@ class _DevicePairedState extends State<DevicePaired> {
             ),
           );
         });
+  }
+
+  void callHandle() async {
+    if (!await launch("tel://9421392730")) {
+      throw 'Could not open Terms and condition!';
+    }
+  }
+
+  handleAddition() {
+    _displayTextInputDialog(context);
+  }
+
+  Future<void> _displayTextInputDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Enter Required Quantity'),
+          backgroundColor: Colors.grey.shade900,
+          content: TextField(
+            controller: _textFieldController,
+            decoration: const InputDecoration(
+              hintText: "Enter here",
+            ),
+            keyboardType: TextInputType.number,
+            maxLength: 1,
+            style: const TextStyle(
+              fontSize: 22.0,
+              fontWeight: FontWeight.bold,
+            ),
+            // textAlign: TextAlign.center,
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              child: const Text('CANCEL'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            ElevatedButton(
+              child: const Text('OK'),
+              onPressed: () {
+                print(_textFieldController.text);
+                setCylQuantity(_textFieldController.text);
+                Navigator.pop(context);
+                getCylQuantity();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

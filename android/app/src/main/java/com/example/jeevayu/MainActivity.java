@@ -20,6 +20,7 @@ public class MainActivity extends FlutterActivity {
     static final String CHANNEL2 = "com.project/notificationControl";
     static final String CHANNEL3 = "com.project/DeviceID";
     static final String CHANNEL4 = "com.project/ConnectionDate";
+    static final String CHANNEL5 = "com.project/CylinderQuantity";
 
     @Override
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
@@ -30,6 +31,7 @@ public class MainActivity extends FlutterActivity {
         MethodChannel channel2 = new MethodChannel(messenger, CHANNEL2);
         MethodChannel channel3 = new MethodChannel(messenger, CHANNEL3);
         MethodChannel channel4 = new MethodChannel(messenger, CHANNEL4);
+        MethodChannel channel5 = new MethodChannel(messenger, CHANNEL5);
 
         // pref method
         channel1.setMethodCallHandler(((call, result) -> {
@@ -127,6 +129,27 @@ public class MainActivity extends FlutterActivity {
                 SharedPreferences sharedPreferences = getSharedPreferences("ConnectionDate", MODE_PRIVATE);
                 String Date = sharedPreferences.getString("Date", "");
                 result.success(Date);
+            }
+        });
+
+        // Connection Date method (read ,update)
+        channel5.setMethodCallHandler((call, result) -> {
+            if (call.method.equals("setQuantity")) {
+
+                final Map<String, Object> arguments = call.arguments();
+
+                String conDate = (String) arguments.get("quantity");
+
+                SharedPreferences sharedPreferences = getSharedPreferences("CylinderQ", MODE_PRIVATE);
+                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                myEdit.putString("Quantity", conDate);
+                myEdit.apply();
+                result.success("Done");
+
+            } else if (call.method.equals("getQuantity")) {
+                SharedPreferences sharedPreferences = getSharedPreferences("CylinderQ", MODE_PRIVATE);
+                String quantity = sharedPreferences.getString("Quantity", "");
+                result.success(quantity);
             }
         });
 
