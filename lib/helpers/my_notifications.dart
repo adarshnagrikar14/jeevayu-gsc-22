@@ -32,7 +32,7 @@ class _MyNotificationsState extends State<MyNotifications> {
             .collection('Notifications')
             .doc(_userId)
             .collection('Notifications')
-            .orderBy("Date", descending: true)
+            .orderBy("Time", descending: true)
             .snapshots(),
 
         // builder
@@ -99,10 +99,9 @@ class _MyNotificationsState extends State<MyNotifications> {
                           child: Text(
                             documents['Body'] + " ",
                             style: const TextStyle(
-                              fontSize: 16.5,
-                              height: 1.3,
-                              fontWeight: FontWeight.bold
-                            ),
+                                fontSize: 16.5,
+                                height: 1.3,
+                                fontWeight: FontWeight.bold),
                           ),
                         ),
                         subtitle: Padding(
@@ -116,15 +115,14 @@ class _MyNotificationsState extends State<MyNotifications> {
                             ),
                           ),
                         ),
-                        leading:  ClipOval(
+                        leading: ClipOval(
                           child: Container(
                             color: Colors.grey[900],
                             padding: const EdgeInsets.all(10.0),
                             child: Image(
-                             image:
-                                 customIcon(documents['Type']),
-                                 height: 50,
-                                ),
+                              image: customIcon(documents['Type']),
+                              height: 50,
+                            ),
                           ),
                         ),
                       ),
@@ -142,9 +140,9 @@ class _MyNotificationsState extends State<MyNotifications> {
 
 customColor(document) {
   if (document == "Alert") {
-    return Colors.red;
+    return const Color.fromARGB(255, 95, 38, 34);
   } else {
-    return Colors.green;
+    return const Color.fromARGB(255, 41, 68, 42);
   }
 }
 

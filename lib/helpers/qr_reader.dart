@@ -30,6 +30,7 @@ class _QrReaderState extends State<QrReader> {
 
   static const method1 = MethodChannel('com.project/DeviceID');
   static const method2 = MethodChannel('com.project/ConnectionDate');
+  static const method3 = MethodChannel('com.project/CylinderQuantity');
 
   @override
   void initState() {
@@ -40,6 +41,12 @@ class _QrReaderState extends State<QrReader> {
       _searching = false;
       _QRvalue = "";
     });
+  }
+
+  Future<void> setCylQuantity() async {
+    var data = <String, dynamic>{"quantity": "1"};
+    String value = await method3.invokeMethod("setQuantity", data);
+    print(value);
   }
 
   @override
@@ -98,6 +105,11 @@ class _QrReaderState extends State<QrReader> {
                   color: Colors.green,
                 )
               : const Text(''),
+
+          const Align(
+            alignment: Alignment.bottomCenter,
+            child: Icon(Icons.qr_code),
+          )
         ],
       ),
     );
@@ -163,6 +175,7 @@ class _QrReaderState extends State<QrReader> {
     String value2 = await method2.invokeMethod("setConnectionDate", date);
 
     if (value == "Done") {
+      setCylQuantity();
       if (value2 == "Done") {
         Navigator.pop(context, _value);
       }

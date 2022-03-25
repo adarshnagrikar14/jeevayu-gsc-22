@@ -14,6 +14,7 @@ import 'package:jeevayu/features/slider_btn.dart';
 import 'package:jeevayu/splashscreen.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DevicePaired extends StatefulWidget {
   const DevicePaired({Key? key}) : super(key: key);
@@ -25,6 +26,7 @@ class DevicePaired extends StatefulWidget {
 class _DevicePairedState extends State<DevicePaired> {
   static const method1 = MethodChannel('com.project/DeviceID');
   static const method2 = MethodChannel('com.project/ConnectionDate');
+  static const method3 = MethodChannel('com.project/CylinderQuantity');
   late String _devID = "";
   late String _conDate = "";
 
@@ -32,6 +34,18 @@ class _DevicePairedState extends State<DevicePaired> {
   final DatabaseReference _dbref = FirebaseDatabase.instance.ref();
   late Timer _timer;
   late int _percent = 0;
+  late int _percentQuantity = 0;
+  late int _exactQuantity = 0;
+  late String _quantityCylinder = "";
+
+  late bool _alertFifty = false;
+  late bool _alertTwentyFive = false;
+  late bool _alertTen = false;
+  late bool _alertFive = false;
+
+  late int _numQuantity = 1;
+
+  final TextEditingController _textFieldController = TextEditingController();
 
   // late String _profile;
 
@@ -47,9 +61,9 @@ class _DevicePairedState extends State<DevicePaired> {
   @override
   void initState() {
     // using timer to update data in 10 sec interval
-    // _timer = Timer.periodic(const Duration(seconds: 60), (timer) {
-    //   handleWeightData(_devID);
-    // });
+    _timer = Timer.periodic(const Duration(minutes: 2), (timer) {
+      handleWeightData(_devID);
+    });
 
     // get the device ID
     getID();
@@ -72,13 +86,21 @@ class _DevicePairedState extends State<DevicePaired> {
     print(value);
   }
 
+  Future<void> setCylQuantity(String qq) async {
+    var data = <String, dynamic>{"quantity": qq};
+    String value = await method3.invokeMethod("setQuantity", data);
+    print(value);
+  }
+
   Future getID() async {
     final String _val = await method1.invokeMethod('getDeviceID');
     setState(() {
       _devID = _val;
     });
     handleWeightData(_val);
+    handleQuantityData(_val);
     getCommunications(_val);
+    getCylQuantity();
   }
 
   Future getDate() async {
@@ -86,6 +108,15 @@ class _DevicePairedState extends State<DevicePaired> {
     setState(() {
       _conDate = _val;
     });
+  }
+
+  Future getCylQuantity() async {
+    final String _val = await method3.invokeMethod('getQuantity');
+    setState(() {
+      _quantityCylinder = _val;
+      _numQuantity = int.parse(_val);
+    });
+    print(_numQuantity);
   }
 
   Future getCommunications(String val) async {
@@ -115,13 +146,6 @@ class _DevicePairedState extends State<DevicePaired> {
     return Scaffold(
       backgroundColor: Colors.grey[900],
       body: customDisplay(),
-      // floatingActionButton: FloatingActionButton(
-      //   backgroundColor: Colors.green,
-      //   onPressed: () {
-      //     handleHistory();
-      //   },
-      //   child: const Icon(Icons.stop),
-      // ),
     );
   }
 
@@ -216,52 +240,188 @@ class _DevicePairedState extends State<DevicePaired> {
                     ],
                   ),
 
-                  // o2 quantity
+                  // div
                   const Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 18.0,
-                    ),
-                    child: Text(
-                      "Approx Oxygen Quantity (In Litres) - 20 L",
-                      style: TextStyle(
-                        fontSize: 18.0,
-                      ),
+                    padding: EdgeInsets.only(top: 20.0),
+                    child: Divider(
+                      color: Colors.grey,
+                      height: 1.5,
                     ),
                   ),
 
-                  // current weight- total weight
-                  const Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 5.0,
+                  // total weight
+                  ListTile(
+                    title: const Text(
+                      "Total Quantity of O\u2082 (in ltr):",
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    child: Text(
-                      "Current Weight- 17 KG    Total Weight- 20 KG",
-                      style: TextStyle(
-                        fontSize: 16.5,
-                      ),
+                    subtitle: const Text("15\t\tL"),
+                    trailing: Image.asset(
+                      "assets/social/cyl.png",
+                      width: 45.0,
                     ),
                   ),
 
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 5.0,
-                        horizontal: 10.0,
+                  // current weight
+                  ListTile(
+                    title: Text(
+                      "Current Quantity Available:\n" +
+                          _exactQuantity.toString() +
+                          "\t\tL",
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, height: 1.5),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: LinearPercentIndicator(
+                      progressColor: Colors.green,
+                      percent: _percentQuantity / 100,
+                      backgroundColor: Colors.white24,
+                      animation: true,
+                      lineHeight: 7.0,
+                      barRadius: const Radius.circular(20.0),
+                    ),
+                  ),
+
+                  // div
+                  const Padding(
+                    padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
+                    child: Divider(
+                      color: Colors.grey,
+                      height: 1.5,
+                    ),
+                  ),
+
+                  // required quantity:
+                  ListTile(
+                    title: const Text(
+                      "Required Quantity of Cylinder",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        height: 1.5,
                       ),
-                      child: Text(
-                        "1/5",
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
+                    ),
+                    subtitle: const Text(
+                      "It will enable timely alert for next cylinder.",
+                    ),
+                    leading: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          _quantityCylinder.isEmpty || _quantityCylinder == "0"
+                              ? "1"
+                              : _quantityCylinder,
+                          style: const TextStyle(
+                            fontSize: 27.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
+                      ],
+                    ),
+                    trailing: GestureDetector(
+                      onTap: handleAddition,
+                      child: Image.asset(
+                        "assets/social/edit.png",
+                        width: 25.0,
                       ),
                     ),
                   ),
 
-                  const SizedBox(
-                    height: 50.0,
-                  )
+                  // div
+                  const Padding(
+                    padding: EdgeInsets.only(top: 10.0, bottom: 5.0),
+                    child: Divider(
+                      color: Colors.grey,
+                      height: 1.5,
+                    ),
+                  ),
+
+                  // required quantity:
+                  ListTile(
+                    title: const Text(
+                      "Current Quantity of Cylinder",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        height: 1.5,
+                      ),
+                    ),
+                    subtitle: const Text(
+                      "This is the current quantity of the total required cylinder.",
+                    ),
+                    leading: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: const [
+                        Text(
+                          "1",
+                          style: TextStyle(
+                            fontSize: 27.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    trailing: GestureDetector(
+                      onTap: handleAddition,
+                      child: Image.asset(
+                        "assets/social/present.png",
+                        width: 25.0,
+                      ),
+                    ),
+                  ),
+
+                  // div
+                  const Padding(
+                    padding: EdgeInsets.only(top: 10.0, bottom: 5.0),
+                    child: Divider(
+                      color: Colors.grey,
+                      height: 1.5,
+                    ),
+                  ),
+
+                  // cancel next cyl
+                  _numQuantity > 1
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              primary: Colors.green,
+                            ),
+                            onPressed: () {
+                              setCylQuantity("1");
+                              getCylQuantity();
+                              // ignore: deprecated_member_use
+                              Scaffold.of(context).showSnackBar(SnackBar(
+                                content: const Text(
+                                  "Cylinder Cancelled!",
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                backgroundColor:
+                                    const Color.fromARGB(255, 73, 168, 43),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                behavior: SnackBarBehavior.floating,
+                              ));
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal:
+                                      MediaQuery.of(context).size.width / 5,
+                                  vertical: 10.0),
+                              child: const Text("CANCEL NEXT CYLINDER"),
+                            ),
+                          ),
+                        )
+                      : const SizedBox(
+                          height: 25.0,
+                        ),
                 ],
               ),
             ),
@@ -599,7 +759,7 @@ class _DevicePairedState extends State<DevicePaired> {
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30.0),
                             side: const BorderSide(
-                              color: Colors.lightGreen,
+                              color: Colors.green,
                               width: 1.0,
                             ),
                           ),
@@ -719,6 +879,33 @@ class _DevicePairedState extends State<DevicePaired> {
         setState(() {
           _percent = _va.toInt();
         });
+
+        // alert handling
+        handleAlert(_va.toInt());
+      }).onError((error, stackTrace) {
+        print(error);
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  handleQuantityData(String val) {
+    try {
+      _dbref.child(val).child("Quantity").once().then((value) {
+        print(value.snapshot.value);
+
+        // for 10 litre total O2:= 100/15 = 6.666
+        int _value = value.snapshot.value! as int;
+
+        double _va = (_value.toDouble()) * 6.67;
+
+        print(_va);
+
+        setState(() {
+          _percentQuantity = _va.toInt();
+          _exactQuantity = value.snapshot.value! as int;
+        });
       }).onError((error, stackTrace) {
         print(error);
       });
@@ -779,6 +966,9 @@ class _DevicePairedState extends State<DevicePaired> {
                 SliderButton(
                   action: () {
                     Navigator.pop(context);
+                    Timer(const Duration(milliseconds: 400), () {
+                      callHandle();
+                    });
                   },
                   label: const Text(
                     "Contact us     ",
@@ -908,5 +1098,221 @@ class _DevicePairedState extends State<DevicePaired> {
             ),
           );
         });
+  }
+
+  void callHandle() async {
+    if (!await launch("tel://9421392730")) {
+      throw 'Could not open Terms and condition!';
+    }
+  }
+
+  handleAddition() {
+    _displayTextInputDialog(context);
+  }
+
+  Future<void> _displayTextInputDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Enter Required Quantity'),
+          backgroundColor: Colors.grey.shade900,
+          content: TextField(
+            controller: _textFieldController,
+            decoration: const InputDecoration(
+              hintText: "Enter here",
+            ),
+            keyboardType: TextInputType.number,
+            maxLength: 1,
+            style: const TextStyle(
+              fontSize: 22.0,
+              fontWeight: FontWeight.bold,
+            ),
+            // textAlign: TextAlign.center,
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              child: const Text('CANCEL'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            ElevatedButton(
+              child: const Text('OK'),
+              onPressed: () {
+                print(_textFieldController.text);
+                setCylQuantity(_textFieldController.text);
+                Navigator.pop(context);
+                getCylQuantity();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void handleAlert(int int) {
+    if (int <= 50 && int >= 48) {
+      if (!_alertFifty) {
+        // date and time:
+        String liveDate =
+            DateFormat('dd/MM/yy').format(DateTime.now()).toString();
+        String liveTime =
+            DateFormat('hh:mm a').format(DateTime.now()).toString();
+
+        // set firebase notification
+        FirebaseFirestore.instance.runTransaction(
+          (transaction) async {
+            DocumentReference reference = FirebaseFirestore.instance
+                .collection('Notifications')
+                .doc(user!.uid)
+                .collection("Notifications")
+                .doc("FiftyPercentAlert");
+
+            await reference.set(
+              {
+                "Body": "$int% Oxygen left in the Cylinder.",
+                "Date": liveDate,
+                "Time": liveTime,
+                "Type": "Alert"
+              },
+            ).whenComplete(() {
+              handleNotification(
+                "Alert $int% O\u2082 left",
+                "Available Quantity in cylinder is at $int %",
+              );
+            }).onError((error, stackTrace) {
+              handleNotification("Error Occurred",
+                  "There was an error connecting to the server , kindly Retry!");
+            });
+          },
+        );
+
+        setState(() {
+          _alertFifty = true;
+        });
+      }
+    } else if (int <= 25 && int >= 23) {
+      if (!_alertTwentyFive) {
+        // date and time:
+        String liveDate =
+            DateFormat('dd/MM/yy').format(DateTime.now()).toString();
+        String liveTime =
+            DateFormat('hh:mm a').format(DateTime.now()).toString();
+
+        // set firebase notification
+        FirebaseFirestore.instance.runTransaction(
+          (transaction) async {
+            DocumentReference reference = FirebaseFirestore.instance
+                .collection('Notifications')
+                .doc(user!.uid)
+                .collection("Notifications")
+                .doc("TwentyFivePercentAlert");
+
+            await reference.set(
+              {
+                "Body": "$int% Oxygen left in the Cylinder.",
+                "Date": liveDate,
+                "Time": liveTime,
+                "Type": "Alert"
+              },
+            ).whenComplete(() {
+              handleNotification(
+                "Alert $int% O\u2082 left",
+                "Available Quantity in cylinder is at $int %",
+              );
+            }).onError((error, stackTrace) {
+              handleNotification("Error Occurred",
+                  "There was an error connecting to the server , kindly Retry!");
+            });
+          },
+        );
+
+        setState(() {
+          _alertTwentyFive = true;
+        });
+      }
+    } else if (int <= 10 && int >= 8) {
+      if (!_alertTen) {
+        // date and time:
+        String liveDate =
+            DateFormat('dd/MM/yy').format(DateTime.now()).toString();
+        String liveTime =
+            DateFormat('hh:mm a').format(DateTime.now()).toString();
+
+        // set firebase notification
+        FirebaseFirestore.instance.runTransaction(
+          (transaction) async {
+            DocumentReference reference = FirebaseFirestore.instance
+                .collection('Notifications')
+                .doc(user!.uid)
+                .collection("Notifications")
+                .doc("TenPercentAlert");
+
+            await reference.set(
+              {
+                "Body": "$int% Oxygen left in the Cylinder.",
+                "Date": liveDate,
+                "Time": liveTime,
+                "Type": "Alert"
+              },
+            ).whenComplete(() {
+              handleNotification(
+                "Alert $int% O\u2082 left",
+                "Available Quantity in cylinder is at $int %",
+              );
+            }).onError((error, stackTrace) {
+              handleNotification("Error Occurred",
+                  "There was an error connecting to the server , kindly Retry!");
+            });
+          },
+        );
+
+        setState(() {
+          _alertTen = true;
+        });
+      }
+    } else if (int <= 5 && int >= 3) {
+      if (!_alertFive) {
+        // date and time:
+        String liveDate =
+            DateFormat('dd/MM/yy').format(DateTime.now()).toString();
+        String liveTime =
+            DateFormat('hh:mm a').format(DateTime.now()).toString();
+
+        // set firebase notification
+        FirebaseFirestore.instance.runTransaction(
+          (transaction) async {
+            DocumentReference reference = FirebaseFirestore.instance
+                .collection('Notifications')
+                .doc(user!.uid)
+                .collection("Notifications")
+                .doc("FivePercentAlert");
+
+            await reference.set(
+              {
+                "Body": "Only $int% Oxygen left in the Cylinder. Kindly refill",
+                "Date": liveDate,
+                "Time": liveTime,
+                "Type": "Alert"
+              },
+            ).whenComplete(() {
+              handleNotification(
+                "Alert $int% O\u2082 left",
+                "Available Quantity in cylinder is at $int %",
+              );
+            }).onError((error, stackTrace) {
+              handleNotification("Error Occurred",
+                  "There was an error connecting to the server , kindly Retry!");
+            });
+          },
+        );
+
+        setState(() {
+          _alertFive = true;
+        });
+      }
+    }
   }
 }

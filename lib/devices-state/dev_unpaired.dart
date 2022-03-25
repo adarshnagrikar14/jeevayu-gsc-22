@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -165,22 +167,22 @@ class _DeviceUnpairedState extends State<DeviceUnpaired> {
         },
       );
     } else {
-      var snackBar = SnackBar(
+
+      Scaffold.of(context).showSnackBar(SnackBar(
         content: const Text(
           "Failed to get data. Retry!",
           style: TextStyle(
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
             color: Colors.white,
-            fontSize: 16.0,
           ),
         ),
-        duration: const Duration(seconds: 3),
-        backgroundColor: Colors.red,
-        behavior: SnackBarBehavior.floating,
+        backgroundColor:const Color.fromARGB(255, 196, 27, 27),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.0),
         ),
-      );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        behavior: SnackBarBehavior.floating,
+      ));
     }
   }
 
