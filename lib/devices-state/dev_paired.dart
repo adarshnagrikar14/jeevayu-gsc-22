@@ -38,6 +38,13 @@ class _DevicePairedState extends State<DevicePaired> {
   late int _exactQuantity = 0;
   late String _quantityCylinder = "";
 
+  late bool _alertFifty = false;
+  late bool _alertTwentyFive = false;
+  late bool _alertTen = false;
+  late bool _alertFive = false;
+
+  late int _numQuantity = 1;
+
   final TextEditingController _textFieldController = TextEditingController();
 
   // late String _profile;
@@ -54,9 +61,9 @@ class _DevicePairedState extends State<DevicePaired> {
   @override
   void initState() {
     // using timer to update data in 10 sec interval
-    // _timer = Timer.periodic(const Duration(seconds: 60), (timer) {
-    //   handleWeightData(_devID);
-    // });
+    _timer = Timer.periodic(const Duration(minutes: 2), (timer) {
+      handleWeightData(_devID);
+    });
 
     // get the device ID
     getID();
@@ -107,7 +114,9 @@ class _DevicePairedState extends State<DevicePaired> {
     final String _val = await method3.invokeMethod('getQuantity');
     setState(() {
       _quantityCylinder = _val;
+      _numQuantity = int.parse(_val);
     });
+    print(_numQuantity);
   }
 
   Future getCommunications(String val) async {
@@ -373,18 +382,46 @@ class _DevicePairedState extends State<DevicePaired> {
                   ),
 
                   // cancel next cyl
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: TextButton(
-                      onPressed: () {},
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: MediaQuery.of(context).size.width / 5,
-                            vertical: 10.0),
-                        child: const Text("CANCEL NEXT"),
-                      ),
-                    ),
-                  ),
+                  _numQuantity > 1
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              primary: Colors.green,
+                            ),
+                            onPressed: () {
+                              setCylQuantity("1");
+                              getCylQuantity();
+                              // ignore: deprecated_member_use
+                              Scaffold.of(context).showSnackBar(SnackBar(
+                                content: const Text(
+                                  "Cylinder Cancelled!",
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                backgroundColor:
+                                    const Color.fromARGB(255, 73, 168, 43),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                behavior: SnackBarBehavior.floating,
+                              ));
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal:
+                                      MediaQuery.of(context).size.width / 5,
+                                  vertical: 10.0),
+                              child: const Text("CANCEL NEXT CYLINDER"),
+                            ),
+                          ),
+                        )
+                      : const SizedBox(
+                          height: 25.0,
+                        ),
                 ],
               ),
             ),
@@ -722,7 +759,7 @@ class _DevicePairedState extends State<DevicePaired> {
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30.0),
                             side: const BorderSide(
-                              color: Colors.lightGreen,
+                              color: Colors.green,
                               width: 1.0,
                             ),
                           ),
@@ -842,6 +879,9 @@ class _DevicePairedState extends State<DevicePaired> {
         setState(() {
           _percent = _va.toInt();
         });
+
+        // alert handling
+        handleAlert(_va.toInt());
       }).onError((error, stackTrace) {
         print(error);
       });
@@ -925,8 +965,10 @@ class _DevicePairedState extends State<DevicePaired> {
                 // main section - em
                 SliderButton(
                   action: () {
-                    callHandle();
                     Navigator.pop(context);
+                    Timer(const Duration(milliseconds: 400), () {
+                      callHandle();
+                    });
                   },
                   label: const Text(
                     "Contact us     ",
@@ -1108,5 +1150,169 @@ class _DevicePairedState extends State<DevicePaired> {
         );
       },
     );
+  }
+
+  void handleAlert(int int) {
+    if (int <= 50 && int >= 48) {
+      if (!_alertFifty) {
+        // date and time:
+        String liveDate =
+            DateFormat('dd/MM/yy').format(DateTime.now()).toString();
+        String liveTime =
+            DateFormat('hh:mm a').format(DateTime.now()).toString();
+
+        // set firebase notification
+        FirebaseFirestore.instance.runTransaction(
+          (transaction) async {
+            DocumentReference reference = FirebaseFirestore.instance
+                .collection('Notifications')
+                .doc(user!.uid)
+                .collection("Notifications")
+                .doc("FiftyPercentAlert");
+
+            await reference.set(
+              {
+                "Body": "$int% Oxygen left in the Cylinder.",
+                "Date": liveDate,
+                "Time": liveTime,
+                "Type": "Alert"
+              },
+            ).whenComplete(() {
+              handleNotification(
+                "Alert $int% O\u2082 left",
+                "Available Quantity in cylinder is at $int %",
+              );
+            }).onError((error, stackTrace) {
+              handleNotification("Error Occurred",
+                  "There was an error connecting to the server , kindly Retry!");
+            });
+          },
+        );
+
+        setState(() {
+          _alertFifty = true;
+        });
+      }
+    } else if (int <= 25 && int >= 23) {
+      if (!_alertTwentyFive) {
+        // date and time:
+        String liveDate =
+            DateFormat('dd/MM/yy').format(DateTime.now()).toString();
+        String liveTime =
+            DateFormat('hh:mm a').format(DateTime.now()).toString();
+
+        // set firebase notification
+        FirebaseFirestore.instance.runTransaction(
+          (transaction) async {
+            DocumentReference reference = FirebaseFirestore.instance
+                .collection('Notifications')
+                .doc(user!.uid)
+                .collection("Notifications")
+                .doc("TwentyFivePercentAlert");
+
+            await reference.set(
+              {
+                "Body": "$int% Oxygen left in the Cylinder.",
+                "Date": liveDate,
+                "Time": liveTime,
+                "Type": "Alert"
+              },
+            ).whenComplete(() {
+              handleNotification(
+                "Alert $int% O\u2082 left",
+                "Available Quantity in cylinder is at $int %",
+              );
+            }).onError((error, stackTrace) {
+              handleNotification("Error Occurred",
+                  "There was an error connecting to the server , kindly Retry!");
+            });
+          },
+        );
+
+        setState(() {
+          _alertTwentyFive = true;
+        });
+      }
+    } else if (int <= 10 && int >= 8) {
+      if (!_alertTen) {
+        // date and time:
+        String liveDate =
+            DateFormat('dd/MM/yy').format(DateTime.now()).toString();
+        String liveTime =
+            DateFormat('hh:mm a').format(DateTime.now()).toString();
+
+        // set firebase notification
+        FirebaseFirestore.instance.runTransaction(
+          (transaction) async {
+            DocumentReference reference = FirebaseFirestore.instance
+                .collection('Notifications')
+                .doc(user!.uid)
+                .collection("Notifications")
+                .doc("TenPercentAlert");
+
+            await reference.set(
+              {
+                "Body": "$int% Oxygen left in the Cylinder.",
+                "Date": liveDate,
+                "Time": liveTime,
+                "Type": "Alert"
+              },
+            ).whenComplete(() {
+              handleNotification(
+                "Alert $int% O\u2082 left",
+                "Available Quantity in cylinder is at $int %",
+              );
+            }).onError((error, stackTrace) {
+              handleNotification("Error Occurred",
+                  "There was an error connecting to the server , kindly Retry!");
+            });
+          },
+        );
+
+        setState(() {
+          _alertTen = true;
+        });
+      }
+    } else if (int <= 5 && int >= 3) {
+      if (!_alertFive) {
+        // date and time:
+        String liveDate =
+            DateFormat('dd/MM/yy').format(DateTime.now()).toString();
+        String liveTime =
+            DateFormat('hh:mm a').format(DateTime.now()).toString();
+
+        // set firebase notification
+        FirebaseFirestore.instance.runTransaction(
+          (transaction) async {
+            DocumentReference reference = FirebaseFirestore.instance
+                .collection('Notifications')
+                .doc(user!.uid)
+                .collection("Notifications")
+                .doc("FivePercentAlert");
+
+            await reference.set(
+              {
+                "Body": "Only $int% Oxygen left in the Cylinder. Kindly refill",
+                "Date": liveDate,
+                "Time": liveTime,
+                "Type": "Alert"
+              },
+            ).whenComplete(() {
+              handleNotification(
+                "Alert $int% O\u2082 left",
+                "Available Quantity in cylinder is at $int %",
+              );
+            }).onError((error, stackTrace) {
+              handleNotification("Error Occurred",
+                  "There was an error connecting to the server , kindly Retry!");
+            });
+          },
+        );
+
+        setState(() {
+          _alertFive = true;
+        });
+      }
+    }
   }
 }

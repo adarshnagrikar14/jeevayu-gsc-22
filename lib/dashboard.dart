@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, deprecated_member_use
 
 import 'dart:async';
 
@@ -385,23 +385,21 @@ class _MainScreenState extends State<MainScreen> {
         },
       );
     } else {
-      var snackBar = SnackBar(
+      Scaffold.of(context).showSnackBar(SnackBar(
         content: const Text(
           "Failed to get data. Retry!",
           style: TextStyle(
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
             color: Colors.white,
-            fontSize: 16.0,
           ),
         ),
-        duration: const Duration(seconds: 3),
-        backgroundColor: Colors.red,
-        behavior: SnackBarBehavior.floating,
-        // shape: statdium,
+        backgroundColor: const Color.fromARGB(255, 196, 27, 27),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.0),
         ),
-      );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        behavior: SnackBarBehavior.floating,
+      ));
     }
   }
 

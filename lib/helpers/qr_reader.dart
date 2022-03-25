@@ -105,6 +105,11 @@ class _QrReaderState extends State<QrReader> {
                   color: Colors.green,
                 )
               : const Text(''),
+
+          const Align(
+            alignment: Alignment.bottomCenter,
+            child: Icon(Icons.qr_code),
+          )
         ],
       ),
     );
