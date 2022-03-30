@@ -33,8 +33,8 @@ class _DevicePairedState extends State<DevicePaired> {
   final User? user = FirebaseAuth.instance.currentUser;
   final DatabaseReference _dbref = FirebaseDatabase.instance.ref();
   late Timer _timer;
-  late int _percent = 0;
-  late int _percentQuantity = 0;
+  late double _percent = 0;
+  late double _percentQuantity = 0;
   late int _exactQuantity = 0;
   late String _quantityCylinder = "";
 
@@ -42,6 +42,9 @@ class _DevicePairedState extends State<DevicePaired> {
   late bool _alertTwentyFive = false;
   late bool _alertTen = false;
   late bool _alertFive = false;
+
+  late String _hours = "--";
+  late String _minutes = "--";
 
   late int _numQuantity = 1;
 
@@ -61,7 +64,7 @@ class _DevicePairedState extends State<DevicePaired> {
   @override
   void initState() {
     // using timer to update data in 10 sec interval
-    _timer = Timer.periodic(const Duration(minutes: 2), (timer) {
+    _timer = Timer.periodic(const Duration(minutes: 1), (timer) {
       handleWeightData(_devID);
     });
 
@@ -180,7 +183,7 @@ class _DevicePairedState extends State<DevicePaired> {
                         ),
                         child: CircularPercentIndicator(
                           radius: 60.0,
-                          percent: _percent / 100,
+                          percent: 1 - (_percent / 100),
                           animation: true,
                           backgroundColor: Colors.grey.shade700,
                           animationDuration: 900,
@@ -188,7 +191,7 @@ class _DevicePairedState extends State<DevicePaired> {
                           lineWidth: 13.0,
                           animateFromLastPercent: true,
                           center: Text(
-                            _percent.toString() + " %",
+                            (100 - _percent).toInt().toString() + " %",
                             style: const TextStyle(
                               fontSize: 25.0,
                               fontWeight: FontWeight.w900,
@@ -255,7 +258,7 @@ class _DevicePairedState extends State<DevicePaired> {
                       "Total Quantity of O\u2082 (in ltr):",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    subtitle: const Text("15\t\tL"),
+                    subtitle: const Text("10\t\tL"),
                     trailing: Image.asset(
                       "assets/social/cyl.png",
                       width: 45.0,
@@ -281,6 +284,42 @@ class _DevicePairedState extends State<DevicePaired> {
                       animation: true,
                       lineHeight: 7.0,
                       barRadius: const Radius.circular(20.0),
+                    ),
+                  ),
+
+                  // div
+                  const Padding(
+                    padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
+                    child: Divider(
+                      color: Colors.grey,
+                      height: 1.5,
+                    ),
+                  ),
+
+                  // estimated time:
+                  ListTile(
+                    title: Text(
+                      "$_hours hrs : $_minutes mins left.",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        height: 1.8,
+                        fontSize: 19.0,
+                      ),
+                    ),
+                    subtitle: const Text(
+                      "Estimated time available to replace the current cylinder. (8 hrs at full)",
+                      style: TextStyle(
+                        height: 1.5,
+                      ),
+                    ),
+                    leading: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: const [
+                        Icon(
+                          Icons.timer_sharp,
+                        ),
+                      ],
                     ),
                   ),
 
@@ -871,13 +910,17 @@ class _DevicePairedState extends State<DevicePaired> {
       _dbref.child(val).child("Weight").once().then((value) {
         print(value.snapshot.value);
 
-        // for 80Kg weight = 100/80 = 1.25
-        int _value = value.snapshot.value! as int;
+        // for 18.8Kg weight
+        double _value = value.snapshot.value! as double;
 
-        double _va = (_value.toDouble()) * 1.25;
+        double _calc = 18.8 - _value;
+
+        double _va = (_calc / 3.6) * 100;
+
+        print(_va);
 
         setState(() {
-          _percent = _va.toInt();
+          _percent = _va;
         });
 
         // alert handling
@@ -892,20 +935,27 @@ class _DevicePairedState extends State<DevicePaired> {
 
   handleQuantityData(String val) {
     try {
-      _dbref.child(val).child("Quantity").once().then((value) {
+      _dbref.child(val).child("Weight").once().then((value) {
         print(value.snapshot.value);
 
-        // for 10 litre total O2:= 100/15 = 6.666
-        int _value = value.snapshot.value! as int;
+        // difference betn empty and filled cylinder = 3.6 KG
+        double _value = value.snapshot.value! as double;
 
-        double _va = (_value.toDouble()) * 6.67;
+        double _calc = 18.80 - _value;
 
-        print(_va);
+        double _va1 = 100 - ((_calc / 3.6) * 100);
+        double _va2 = 10 - ((_calc / 3.6) * 10);
+        double _va3 = _calc / 3.6;
 
         setState(() {
-          _percentQuantity = _va.toInt();
-          _exactQuantity = value.snapshot.value! as int;
+          _percentQuantity = _va1;
+          _exactQuantity = _va2.toInt();
         });
+        //
+        // calculate time:
+        calcTime(_va3);
+        //
+        //
       }).onError((error, stackTrace) {
         print(error);
       });
@@ -1314,5 +1364,14 @@ class _DevicePairedState extends State<DevicePaired> {
         });
       }
     }
+  }
+
+  void calcTime(double multiplier) {
+    double _a1 = 8.0 - (8.0 * multiplier);
+    double _a2 = (60 * multiplier);
+    setState(() {
+      _hours = _a1.toInt().toString();
+      _minutes = _a2.toInt().toString();
+    });
   }
 }
